@@ -1,6 +1,43 @@
+@import url('https://fonts.googleapis.com/css2?family=Kurale&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
 #root {
-  max-width: 1280px;
+  --black: #211A1E;
+  --white: #ffffff;
+  --light-blue: #C9E8FF;
+  --blue: #5EBAFE;
+  --light-orange: #F47758;
+  --orange: #F2542D;
+  --wheat: #F5DFBB;
+  --gray: #F6F6F6;
+
+  --border-radius: 20px;
+  /* z-indexes */
+  --ui-index-0: 0; /* for basic elements */
+  --ui-index-1: 1; /* for basic elements */
+  --ui-index-2: 2; /* for basic elements */
+  --ui-index-3: 3; /* for blur and shadow masks */
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  
+  box-sizing: border-box;
+
+  font-family: 'Inter', sans-serif;
+  font-size: 16px;
+}
+
+html {
+  background-color: var(--gray);
+}
+
+h1 {
+  font-family: 'Kurale', serif;
+}
+
+.page-wrapper {
   margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
+  width: 1248px;
 }
