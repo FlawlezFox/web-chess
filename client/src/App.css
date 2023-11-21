@@ -29,8 +29,15 @@
   font-size: 16px;
 }
 
-html {
-  background-color: var(--gray);
+body {
+  background: #F6F6F6;
+}
+
+.main-container {
+  display: flex;
+  flex-direction: column;
+
+  min-height: 100vh;
 }
 
 h1 {
