@@ -1,0 +1,31 @@
+.inputContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.inputLabel {
+    color: var(--black);
+    font-size: 2em;
+}
+
+.inputLogin {
+    width: 784px;
+}
+
+.inputCode {
+    width: 612px;
+}
+
+input {
+    height: 104px;
+    padding: 0 32px;
+
+    background-color: var(--white);
+
+    border: 1px solid var(--black);
+    border-radius: var(--border-radius);
+
+    font-size: 2em;
+    color: var(--black);
+}
