@@ -1,0 +1,14 @@
+.footerContainer {
+    margin-top: auto;
+    display: flex;
+    justify-content: space-between;
+
+    align-self: end;
+}
+
+button {
+    border: none;
+    background-color: transparent;
+
+    cursor: pointer;
+}
