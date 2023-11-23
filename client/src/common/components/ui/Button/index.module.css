@@ -1,0 +1,27 @@
+button {
+    width: 360px;
+    height: 104px;
+
+    color: var(--white);
+    font-size: 2em;
+
+    border-radius: var(--border-radius);
+
+    transition: .25s;
+}
+
+.blueButton { 
+    background-color: var(--blue);
+}
+
+.blueButton:hover {
+    background-color: var(--black);
+}
+
+.orangeButton { 
+    background-color: var(--orange);
+}
+
+.orangeButton:hover {
+    background-color: var(--black)
+}
