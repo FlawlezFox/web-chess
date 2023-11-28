@@ -24,20 +24,26 @@ const ModalJoin = () => {
             <div className={styles.modalHeader}>
                 <div className={styles.heading}>Вход в игру</div>
 
-                <button>
+                <button className={styles.crossButton} onClick={closeModal}>
                     <IconCross />
                 </button>
             </div>
 
-            <Input
-                className="inputCode"
-                label="Введите код игры:"
-            />
+            <form
+                action=""
+                onSubmit={(event) => { event.preventDefault() }}
+                className={styles.joinForm}
+            >
+                <Input
+                    className="inputCode"
+                    label="Введите код игры:"
+                />
 
-            <Button
-                color="Blue"
-                label="Войти в игру"
-            />
+                <Button
+                    color="Blue"
+                    label="Войти в игру"
+                />
+            </form>
         </>
     );
 }
@@ -47,9 +53,35 @@ const ModalInvite = () => {
         <>
             <div className={styles.modalHeader}>
                 <div className={styles.heading}>Создание игры</div>
+
+                <button className={styles.crossButton} onClick={closeModal}>
+                    <IconCross />
+                </button>
             </div>
+
+            <div className={styles.inviteContainer}>
+                <div className={styles.codeLabel}>Комната доступна по коду: </div>
+
+                <div className={styles.codeContainer}>
+                    <span className={styles.code}>1F4IEx</span>
+                    <Button
+                        color="Blue"
+                        label="Скопировать код"
+                    />
+                </div>
+            </div>
+
+            <div className={styles.waitMessage}>Ожидание подключения игрока... </div>
         </>
     );
+}
+
+function closeModal() {
+    const modal: HTMLElement | null = document.getElementById("modalWindow");
+
+    if (modal !== null && modal instanceof HTMLDialogElement) {
+        modal.close();
+    }
 }
 
 export default Modal;

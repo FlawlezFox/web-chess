@@ -11,20 +11,10 @@ import Modal from "../../common/components/layout/Modal/index";
 import styles from "./index.module.css";
 
 const PageHome = () => {
-    const [isStart, setIsStart] = useState<boolean>(false);
+    const [mode, setMode] = useState<"Invite" | "Join">("Invite");
 
-    function handleSetIsStart() {
-        if (isStart === false) {
-            setIsStart(true);
-        } else {
-            setIsStart(false);
-        }
-
-        console.log(isStart);
-    }
-
-    function handleStartGame() {
-        handleSetIsStart();
+    function handleStartGame(mode: "Invite" | "Join") {
+        setMode(mode);
 
         const modal: HTMLElement | null = document.getElementById("modalWindow");
 
@@ -37,7 +27,7 @@ const PageHome = () => {
         <div className="page-wrapper">
 
             {
-                isStart
+                mode === "Invite"
                 ? <Modal mode="Invite" />
                 : <Modal mode="Join" />
             }
@@ -57,13 +47,13 @@ const PageHome = () => {
                     <Button
                         label="Начать игру"
                         color="Blue"
-                        onClick={handleStartGame}
+                        onClick={() => handleStartGame("Invite")}
                     />
 
                     <Button
                         label="Войти в комнату"
                         color="Orange"
-                        onClick={handleStartGame}
+                        onClick={() => handleStartGame("Join")}
                     />
                 </div>
             </form>
