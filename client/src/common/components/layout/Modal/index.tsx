@@ -42,6 +42,8 @@ const ModalJoin = () => {
                 <Button
                     color="Blue"
                     label="Войти в игру"
+                    isLink={true}
+                    to="/game"
                 />
             </form>
         </>
