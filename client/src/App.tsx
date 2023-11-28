@@ -1,11 +1,10 @@
 import './App.css';
-
-import PageHome from './pages/pageHome/index';
+import Router from './common/components/layout/Router';
 
 function App() {
   return (
     <>
-      <PageHome />
+      <Router />
     </>
   )
 }
