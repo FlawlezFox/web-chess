@@ -4,12 +4,12 @@ import cn from "classnames";
 // styles
 import styles from "./index.module.css";
 
-const Button = ({label, color} : IButton) => {
+const Button = ({label, color, onClick} : IButton) => {
     const className = cn({blueButton: color === "Blue", orangeButton: color === "Orange"});
     
     return (
         <div className={styles.buttonContainer}>
-            <button className={styles[className]}>{label}</button>
+            <button className={styles[className]} onClick={onClick}>{label}</button>
         </div>
     );
 }

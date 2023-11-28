@@ -1,7 +1,6 @@
-interface IButton {
+interface IButton extends React.ButtonHTMLAttributes<HTMLButtonElement> {
     label: string;
     color: "Blue" | "Orange";
-    onClick?: () => void;
 }
 
 export default IButton;
