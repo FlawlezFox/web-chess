@@ -1,0 +1,16 @@
+.cell {
+    width: 90px;
+    height: 90px;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.black {
+    background-color: var(--light-orange);
+}
+
+.white {
+    background-color: var(--wheat);
+}
