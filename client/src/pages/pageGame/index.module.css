@@ -1,4 +1,46 @@
+.pageWrapper {
+    margin: 0 auto;
+    width: 1248px;
+}
+
+.gameTitle,
+.gameContainer {
+    margin-top: 24px;
+}
+
+.gameInfo {
+    margin-top: 64px;
+}
+
 .gameContainer {
     display: flex;
-    gap: 60px;
+    justify-content: space-between;
+}
+
+.gameInfo {
+    width: 720px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+}
+
+.gameTitle,
+.userInfo {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.header {
+    font-size: 1.5em;
+}
+
+.iconChessBoard {
+    width: 48px;
+    height: 48px;
+}
+
+.iconProfile {
+    width: 32px;
+    height: 32px;
 }

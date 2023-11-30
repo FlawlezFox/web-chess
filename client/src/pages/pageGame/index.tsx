@@ -27,15 +27,15 @@ const PageGame = () => {
     }
 
     return (
-        <div className="page-wrapper">
+        <div className={styles.pageWrapper}>
             <div className={styles.gameTitle}>
-                <IconChessBoard />
+                <IconChessBoard className={styles.iconChessBoard} />
                 <h1 className={styles.header}>Шахматный гений</h1>
             </div>
 
             <div className={styles.gameInfo}>
                 <div className={styles.userInfo}>
-                    <IconProfile />
+                    <IconProfile className={styles.iconProfile} />
                     <span className={styles.userName}>User12345</span>
                 </div>
 
