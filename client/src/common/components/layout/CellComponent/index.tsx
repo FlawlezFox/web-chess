@@ -9,7 +9,7 @@ const CellComponent = ({ cell }: ICell) => {
 
     return (
         <div className={className}>
-
+            {cell.figure}
         </div>
     );
 }
