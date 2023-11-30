@@ -1,0 +1,98 @@
+.panelContainer,
+.buttonsContainer,
+.movesList {
+    display: flex;
+    flex-direction: column;
+}
+
+.panelContainer {
+    width: 453px;
+    height: 720px;
+    padding: 16px;
+
+    background-color: var(--white);
+
+    border: 1px solid var(--black);
+    border-radius: var(--border-radius);
+
+
+    gap: 16px;
+}
+
+.heading {
+    font-size: 1.5em;
+}
+
+.buttonsContainer {
+    flex-grow: 1;
+    justify-content: flex-end;
+    gap: 16px;
+}
+
+.buttons {
+    display: flex;
+    justify-content: space-between;
+}
+
+button {
+    height: auto;
+    width: auto;
+    padding: 8px 16px;
+
+    border-radius: var(--border-radius);
+}
+
+button:hover,
+li:hover {
+    background-color: var(--light-blue);
+}
+
+.buttonContainer {
+    display: flex;
+    align-content: center;
+    gap: 8px;
+}
+
+.movesList {
+    overflow-y: auto;
+    gap: 8px;
+
+    list-style-position: inside;
+}
+
+.buttonLabel,
+.heading,
+li {
+    color: var(--black);
+}
+
+li {
+    padding: 4px 8px;
+    border-radius: var(--border-radius);
+    position: relative;
+    transition: .5s;
+}
+
+.black::after,
+.white::after {
+    display: block;
+    content: "";
+
+    width: 16px;
+    height: 16px;
+
+    border-radius: var(--border-radius);
+
+    position: absolute;
+    right: 8px;
+    top: 5px;
+}
+
+.black::after {
+    background-color: var(--black);
+}
+
+.white::after {
+    background-color: var(--white);
+    border: 1px solid var(--black);
+}

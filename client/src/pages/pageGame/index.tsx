@@ -3,8 +3,8 @@ import { useEffect, useState } from "react";
 // components
 import IconChessBoard from "../../assets/svg/icon-chess-board.svg?react";
 import IconProfile from "../../assets/svg/icon-profile.svg?react";
-import Footer from "../../common/components/layout/Footer";
 import BoardComponent from "../../common/components/layout/BoardComponent";
+import HistoryPanel from "../../common/components/layout/HistoryPanel";
 
 // models
 import { Board } from "../../models/Board";
@@ -49,10 +49,9 @@ const PageGame = () => {
                     board={board}
                     setBoard={setBoard}
                 />
-                {/* Game History*/}
+                
+                <HistoryPanel />
             </div>
-
-            <Footer />
         </div>
     ); 
 }
