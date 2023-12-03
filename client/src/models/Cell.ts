@@ -4,8 +4,8 @@ import { Colors } from "./Colors";
 import { Figure } from "./figures/Figure";
 
 export class Cell {
-    readonly x: number; // number-coordinate (e.g. 1, 2 ,3 ...)
-    readonly y: string; // symbol-coordinate (e.g. a, b, c ...)
+    readonly x: string; // number-coordinate (e.g. 1, 2 ,3 ...)
+    readonly y: number; // symbol-coordinate (e.g. a, b, c ...)
     readonly color: Colors;
 
     figure: Figure | null;
@@ -14,7 +14,7 @@ export class Cell {
 
     id: string; // nano id key
     
-    constructor(board: Board, x: number, y: string, color: Colors, figure: Figure | null) {
+    constructor(board: Board, x: string, y: number, color: Colors, figure: Figure | null) {
         this.x = x;
         this.y = y;
         this.color = color;

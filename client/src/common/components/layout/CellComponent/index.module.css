@@ -5,6 +5,8 @@
     display: flex;
     justify-content: center;
     align-items: center;
+
+    position: relative;
 }
 
 .cell img {
@@ -13,6 +15,16 @@
 
     
     position: absolute;
+}
+
+.yCoordinates {
+    position: absolute;
+    left: -16px;
+}
+
+.xCoordinates {
+    position: absolute;
+    bottom: -24px;
 }
 
 .black {

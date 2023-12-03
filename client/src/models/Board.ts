@@ -12,13 +12,13 @@ export class Board {
     rowCoordinate: string[] = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
 
     public initCells() {
-        for (const i of this.rowCoordinate) {
+        for (let i = 0; i < 8; i++) {
             const row: Cell[] = [];
-            for (let j = 0; j < 8; j++) {
-                if ((this.rowCoordinate.indexOf(i) + j) % 2 !== 0) {
-                    row.push(new Cell(this, j, i, Colors.BLACK, null));
+            for (const j of this.rowCoordinate) {
+                if ((i + this.rowCoordinate.indexOf(j)) % 2 !== 0) {
+                    row.push(new Cell(this, j, i + 1, Colors.BLACK, null));
                 } else {
-                    row.push(new Cell(this, j, i, Colors.WHITE, null));
+                    row.push(new Cell(this, j, i + 1, Colors.WHITE, null));
                 }
             }
 

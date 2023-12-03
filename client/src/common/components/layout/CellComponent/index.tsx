@@ -8,9 +8,33 @@ const CellComponent = ({ cell }: ICell) => {
     const className: string = cn(styles["cell"], styles[cell.color]);
 
     return (
-        <div className={className}>
-            {cell.figure?.icon && <img src={cell.figure.icon} alt="icon.svg" draggable={false}/>}
-        </div>
+        <>
+            {
+                cell.x + cell.y === "a8"
+                    ? <div className={className}>
+                        {cell.figure?.icon && <img src={cell.figure.icon} alt="icon.svg" draggable={false} />}
+                        <span className={styles.xCoordinates}>{cell.x}</span>
+                        <span className={styles.yCoordinates}>{cell.y}</span>
+                    </div>
+
+                    : cell.y === 8
+                        ? <div className={className}>
+                            {cell.figure?.icon && <img src={cell.figure.icon} alt="icon.svg" draggable={false} />}
+                            <span className={styles.xCoordinates}>{cell.x}</span>
+                        </div>
+
+                        : cell.x === "a"
+                            ? <div className={className}>
+                                {cell.figure?.icon && <img src={cell.figure.icon} alt="icon.svg" draggable={false} />}
+                                <span className={styles.yCoordinates}>{cell.y}</span>
+                            </div>
+
+                            : <div className={className}>
+                                {cell.figure?.icon && <img src={cell.figure.icon} alt="icon.svg" draggable={false} />}
+                            </div>
+
+            }
+        </>
     );
 }
 
