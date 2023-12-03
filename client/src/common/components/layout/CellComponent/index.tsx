@@ -9,7 +9,7 @@ const CellComponent = ({ cell }: ICell) => {
 
     return (
         <div className={className}>
-            {cell.figure}
+            {cell.figure?.icon && <img src={cell.figure.icon} alt="icon.svg" draggable={false}/>}
         </div>
     );
 }
