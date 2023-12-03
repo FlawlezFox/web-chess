@@ -1,5 +1,5 @@
 import { Colors } from "../Colors";
-import icon from "../../assets/svg/icon-pawn.svg?react"
+import icon from "../../assets/svg/icon-pawn.svg"
 import { Cell } from "../Cell";
 import { nanoid } from "nanoid";
 

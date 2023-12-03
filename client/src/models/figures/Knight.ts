@@ -1,8 +1,8 @@
 import { Cell } from "../Cell";
 import { Colors } from "../Colors";
 import { Figure, FigureNames } from "./Figure";
-import iconBlack from "../../assets/svg/icon-knight-black.svg?react";
-import icon from "../../assets/svg/icon-knight.svg?react";
+import iconBlack from "../../assets/svg/icon-knight-black.svg";
+import icon from "../../assets/svg/icon-knight.svg";
 
 export class Knight extends Figure {
     constructor(color: Colors, cell: Cell) {
