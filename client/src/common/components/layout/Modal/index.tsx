@@ -25,7 +25,7 @@ const ModalJoin = () => {
                 <div className={styles.heading}>Вход в игру</div>
 
                 <button className={styles.crossButton} onClick={closeModal}>
-                    <IconCross />
+                    <IconCross className={styles.iconCross} />
                 </button>
             </div>
 
@@ -57,7 +57,7 @@ const ModalInvite = () => {
                 <div className={styles.heading}>Создание игры</div>
 
                 <button className={styles.crossButton} onClick={closeModal}>
-                    <IconCross />
+                    <IconCross className={styles.iconCross} />
                 </button>
             </div>
 

@@ -18,8 +18,8 @@
 }
 
 input {
-    height: 104px;
-    padding: 0 32px;
+    height: 64px;
+    padding: 0 16px;
 
     background-color: var(--white);
 
