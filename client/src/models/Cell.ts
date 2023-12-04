@@ -4,8 +4,8 @@ import { Colors } from "./Colors";
 import { Figure } from "./figures/Figure";
 
 export class Cell {
-    readonly x: string; // number-coordinate (e.g. 1, 2 ,3 ...)
-    readonly y: number; // symbol-coordinate (e.g. a, b, c ...)
+    readonly x: string; // symbol-coordinate (e.g. a, b, c ...)
+    readonly y: number; // number-coordinate (e.g. 1, 2 ,3 ...)
     readonly color: Colors;
 
     figure: Figure | null;
@@ -22,5 +22,13 @@ export class Cell {
         this.board = board;
         this.available = false;
         this.id = nanoid();
+    }
+
+    moveFigure(target: Cell) {
+        if (this.figure && this.figure.canMove(target)) {
+            this.figure.moveFigure(target);
+            target.figure = this.figure;
+            this.figure = null;
+        }
     }
 }

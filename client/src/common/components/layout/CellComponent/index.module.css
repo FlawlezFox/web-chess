@@ -34,3 +34,18 @@
 .white {
     background-color: var(--wheat);
 }
+
+.selected {
+    background-color: var(--blue);
+}
+
+.available {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background-color: var(--blue);
+}
+
+.canAttack {
+    background-color: var(--green);
+}
