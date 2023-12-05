@@ -1,4 +1,6 @@
 import { useEffect, useState } from "react";
+import { Player } from "../../models/Player";
+import { Colors } from "../../models/Colors";
 
 // components
 import IconChessBoard from "../../assets/svg/icon-chess-board.svg?react";
@@ -15,9 +17,14 @@ import styles from "./index.module.css";
 const PageGame = () => {
     const [board, setBoard] = useState<Board>(new Board);
 
+    const [whitePlayer, setWhitePlayer] = useState<Player>(new Player(Colors.WHITE));
+    const [blackPlayer, setBlackPlayer] = useState<Player>(new Player(Colors.BLACK));
+    const [currentPlayer, setCurrentPlayer] = useState<Player | null>(null);
+
     // updating board as the game starts
     useEffect(() => {
         restart();
+        setCurrentPlayer(whitePlayer);
     }, [])
 
     function restart() {
@@ -25,6 +32,10 @@ const PageGame = () => {
         newBoard.initCells();
         newBoard.addFigures();
         setBoard(newBoard);
+    }
+
+    function swapPlayer() {
+        setCurrentPlayer(currentPlayer?.color === Colors.WHITE ? blackPlayer : whitePlayer);
     }
 
     return (
@@ -37,7 +48,11 @@ const PageGame = () => {
             <div className={styles.gameInfo}>
                 <div className={styles.userInfo}>
                     <IconProfile className={styles.iconProfile} />
-                    <span className={styles.userName}>User12345</span>
+                    {
+                        currentPlayer?.color === Colors.WHITE 
+                        ? <span className={styles.userName}>User12345 (белые)</span>
+                        : <span className={styles.userName}>Nickname12 (черные)</span>
+                    }
                 </div>
 
                 <div className={styles.timer}>
@@ -49,6 +64,8 @@ const PageGame = () => {
                 <BoardComponent
                     board={board}
                     setBoard={setBoard}
+                    currentPlayer={currentPlayer}
+                    swapPlayer={swapPlayer}
                 />
                 
                 <HistoryPanel />

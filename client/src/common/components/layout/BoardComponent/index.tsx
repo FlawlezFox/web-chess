@@ -8,15 +8,18 @@ import CellComponent from "../CellComponent";
 // styles
 import styles from "./index.module.css";
 
-const BoardComponent = ({ board, setBoard }: IBoard) => {
+const BoardComponent = ({ board, setBoard, currentPlayer, swapPlayer }: IBoard) => {
     const [selectedCell, setSelectedCell] = useState<Cell | null>(null);
 
     function select(cell: Cell) {
         if (selectedCell && selectedCell !== cell && selectedCell.figure?.canMove(cell)) {
             selectedCell.moveFigure(cell);
+            swapPlayer();
             setSelectedCell(null);
         } else {
-            setSelectedCell(cell);
+            if (cell.figure?.color === currentPlayer?.color) {
+                setSelectedCell(cell);
+            }
         }
     }
 
