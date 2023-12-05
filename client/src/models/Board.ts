@@ -16,9 +16,9 @@ export class Board {
             const row: Cell[] = [];
             for (const j of this.rowCoordinate) {
                 if ((i + this.rowCoordinate.indexOf(j)) % 2 !== 0) {
-                    row.push(new Cell(this, j, i + 1, Colors.BLACK, null));
+                    row.push(new Cell(this, j, i, Colors.BLACK, null));
                 } else {
-                    row.push(new Cell(this, j, i + 1, Colors.WHITE, null));
+                    row.push(new Cell(this, j, i, Colors.WHITE, null));
                 }
             }
 

@@ -15,15 +15,15 @@ const CellComponent = ({ cell, selected, select }: ICell) => {
     return (
         <>
             {
-                cell.x + cell.y === "a8"
+                cell.x + (cell.y + 1) === "a8"
                     ? <div className={className} onClick={() => select(cell)}>
                         {cell.available && !cell.figure && <div className={styles.available}></div>}
                         {cell.figure?.icon && <img src={cell.figure.icon} alt="icon.svg" draggable={false} />}
                         <span className={styles.xCoordinates}>{cell.x}</span>
-                        <span className={styles.yCoordinates}>{cell.y}</span>
+                        <span className={styles.yCoordinates}>{cell.y + 1}</span>
                     </div>
 
-                    : cell.y === 8
+                    : cell.y + 1 === 8
                         ? <div className={className} onClick={() => select(cell)}>
                             {cell.available && !cell.figure && <div className={styles.available}></div>}
                             {cell.figure?.icon && <img src={cell.figure.icon} alt="icon.svg" draggable={false} />}
@@ -34,7 +34,7 @@ const CellComponent = ({ cell, selected, select }: ICell) => {
                             ? <div className={className} onClick={() => select(cell)}>
                                 {cell.available && !cell.figure && <div className={styles.available}></div>}
                                 {cell.figure?.icon && <img src={cell.figure.icon} alt="icon.svg" draggable={false} />}
-                                <span className={styles.yCoordinates}>{cell.y}</span>
+                                <span className={styles.yCoordinates}>{cell.y + 1}</span>
                             </div>
 
                             : <div className={className} onClick={() => select(cell)}>
