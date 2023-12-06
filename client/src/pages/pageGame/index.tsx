@@ -7,6 +7,7 @@ import IconChessBoard from "../../assets/svg/icon-chess-board.svg?react";
 import IconProfile from "../../assets/svg/icon-profile.svg?react";
 import BoardComponent from "../../common/components/layout/BoardComponent";
 import HistoryPanel from "../../common/components/layout/HistoryPanel";
+import Timer from "../../common/components/layout/Timer";
 
 // models
 import { Board } from "../../models/Board";
@@ -17,8 +18,8 @@ import styles from "./index.module.css";
 const PageGame = () => {
     const [board, setBoard] = useState<Board>(new Board);
 
-    const [whitePlayer, setWhitePlayer] = useState<Player>(new Player(Colors.WHITE));
-    const [blackPlayer, setBlackPlayer] = useState<Player>(new Player(Colors.BLACK));
+    const [whitePlayer, ] = useState<Player>(new Player(Colors.WHITE));
+    const [blackPlayer, ] = useState<Player>(new Player(Colors.BLACK));
     const [currentPlayer, setCurrentPlayer] = useState<Player | null>(null);
 
     // updating board as the game starts
@@ -55,9 +56,9 @@ const PageGame = () => {
                     }
                 </div>
 
-                <div className={styles.timer}>
-                    Время на ход: <span className={styles.timeLeft}>1:00</span>
-                </div>
+                <Timer
+                    currentPlayer={currentPlayer}
+                />
             </div>
 
             <div className={styles.gameContainer}>
