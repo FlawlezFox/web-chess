@@ -68,7 +68,9 @@ const PageGame = () => {
                     swapPlayer={swapPlayer}
                 />
                 
-                <HistoryPanel />
+                <HistoryPanel
+                    moves={board.moves}
+                />
             </div>
         </div>
     ); 

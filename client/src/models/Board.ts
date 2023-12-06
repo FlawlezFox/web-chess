@@ -1,3 +1,4 @@
+import IMove from "../common/interfaces/IMove";
 import { Cell } from "./Cell";
 import { Colors } from "./Colors";
 import { Bishop } from "./figures/Bishop";
@@ -10,6 +11,8 @@ import { Rook } from "./figures/Rook";
 export class Board {
     cells: Cell[][] = [];
     rowCoordinate: string[] = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
+
+    moves: IMove[] = [];
 
     public initCells() {
         for (let i = 0; i < 8; i++) {
@@ -90,6 +93,7 @@ export class Board {
     public getCopyBoard(): Board {
         const newBoard = new Board();
         newBoard.cells = this.cells;
+        newBoard.moves = this.moves;
         return newBoard;
     }
 }

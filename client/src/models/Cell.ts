@@ -13,7 +13,7 @@ export class Cell {
     available: boolean; // available for move
 
     id: string; // nano id key
-    
+
     constructor(board: Board, x: string, y: number, color: Colors, figure: Figure | null) {
         this.x = x;
         this.y = y;
@@ -24,9 +24,20 @@ export class Cell {
         this.id = nanoid();
     }
 
+    addMove(target: Cell) {
+        this.board.moves.push({
+            color: this.figure?.color,
+            move: target.x + (target.y + 1),
+            figure: target.figure
+        })
+    }
+
     moveFigure(target: Cell) {
         if (this.figure && this.figure?.canMove(target)) {
             this.figure.moveFigure(target);
+
+            this.addMove(target);
+
             target.setFigure(this.figure);
             this.figure = null;
         }
@@ -95,7 +106,7 @@ export class Cell {
         const dx = this.getNumericXCoordinate(this.x) < this.getNumericXCoordinate(target.x) ? 1 : -1;
 
         for (let i = 1; i < absY; i++) {
-            if (!this.board.getCell(this.getNumericXCoordinate(this.x) + dx*i, this.y + dy*i).isEmpty()) {
+            if (!this.board.getCell(this.getNumericXCoordinate(this.x) + dx * i, this.y + dy * i).isEmpty()) {
                 return false;
             }
         }

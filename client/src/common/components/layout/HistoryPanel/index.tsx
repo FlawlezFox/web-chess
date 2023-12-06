@@ -1,5 +1,4 @@
-import { Colors } from "../../../../models/Colors";
-import IMove from "../../../interfaces/IMove";
+import IHistory from "../../../interfaces/IHistory";
 
 // components
 import IconGiveup from "../../../../assets/svg/icon-giveup.svg?react";
@@ -8,15 +7,7 @@ import IconHandshake from "../../../../assets/svg/icon-handshake.svg?react";
 // styles
 import styles from "./index.module.css";
 
-// fake moves
-const moves: IMove[] = [
-    { color: Colors.BLACK, move: "f6" },
-    { color: Colors.WHITE, move: "d3" },
-    { color: Colors.BLACK, move: "e5" },
-    { color: Colors.WHITE, move: "g3" },
-];
-
-const HistoryPanel = () => {
+const HistoryPanel = ({moves}: IHistory) => {
     return (
         <div className={styles.panelContainer}>
             <div className={styles.heading}>
@@ -28,8 +19,14 @@ const HistoryPanel = () => {
             <ol className={styles.movesList}>
                 {
                     moves.map((move, id) =>
-                        <li className={styles[move.color]} key={id}>
-                            {move.move}
+                        <li className={styles[move.color || "null"]} key={id}>
+                            {move.move} &nbsp;
+                            
+                            {
+                                move.figure?.icon 
+                                    ? <img src={move.figure.icon} alt="icon.svg" width={16} height={16} /> 
+                                    : ""
+                            }
                         </li>
                     )
                 }
