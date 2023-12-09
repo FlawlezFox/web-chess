@@ -18,8 +18,8 @@ import styles from "./index.module.css";
 const PageGame = () => {
     const [board, setBoard] = useState<Board>(new Board);
 
-    const [whitePlayer, ] = useState<Player>(new Player(Colors.WHITE));
-    const [blackPlayer, ] = useState<Player>(new Player(Colors.BLACK));
+    const [whitePlayer, ] = useState<Player>(new Player("Cool_name1", Colors.WHITE));
+    const [blackPlayer, ] = useState<Player>(new Player("bestPlayer12", Colors.BLACK));
     const [currentPlayer, setCurrentPlayer] = useState<Player | null>(null);
 
     // updating board as the game starts
@@ -52,8 +52,8 @@ const PageGame = () => {
                     <IconProfile className={styles.iconProfile} />
                     {
                         currentPlayer?.color === Colors.WHITE 
-                        ? <span className={styles.userName}>User12345 (белые)</span>
-                        : <span className={styles.userName}>Nickname12 (черные)</span>
+                        ? <span className={styles.userName}>{whitePlayer.name} (белые)</span>
+                        : <span className={styles.userName}>{blackPlayer.name} (черные)</span>
                     }
                 </div>
 
