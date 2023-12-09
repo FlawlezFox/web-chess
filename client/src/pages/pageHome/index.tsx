@@ -36,9 +36,11 @@ const PageHome = () => {
     }
 
     function handleStartGame(mode: "Invite" | "Join") {
-        if (validateUserName() === false) {
+        if (!validateUserName()) {
+            setErrorMessage('Логин должен состоять из латинских букв, цифр, "-", "_", длиной от 4 до 16 символов')
             return;
         }
+        setErrorMessage("");
 
         setMode(mode);
 
@@ -51,6 +53,10 @@ const PageHome = () => {
 
     function handleOnSubmit(event: FormEvent<HTMLFormElement>) {
         event.preventDefault();
+
+        if (validateUserName() === false) {
+            return;
+        }
 
         let player: Player;
 
