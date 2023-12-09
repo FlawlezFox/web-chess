@@ -1,14 +1,14 @@
-import { useEffect} from "react";
+import { useEffect } from "react";
+import { useTimer } from "react-timer-hook";
 import ITimer from "../../../interfaces/ITimer";
 import cn from "classnames";
 
 // styles
 import styles from "./index.module.css";
-import { useTimer } from "react-timer-hook";
 
-const Timer = ({currentPlayer}: ITimer) => {
+const Timer = ({ currentPlayer }: ITimer) => {
     const time = new Date();
-    const timer = useTimer({expiryTimestamp: time, onExpire});
+    const timer = useTimer({ expiryTimestamp: time, onExpire });
 
     const timeLeftStyle = cn(timer.totalSeconds < 10 ? "errorTime" : "timeLeft")
 
@@ -20,7 +20,7 @@ const Timer = ({currentPlayer}: ITimer) => {
     function onExpire() {
         // TODO: make losing logic when timer is expired
         alert("You lose");
-    }    
+    }
 
     return (
         <div className={styles.timer}>
@@ -28,10 +28,10 @@ const Timer = ({currentPlayer}: ITimer) => {
             <span className={styles[timeLeftStyle]}>
                 {
                     timer.totalSeconds === 60
-                    ? "1:00"
-                    : timer.totalSeconds < 10
-                    ? `0:0${timer.totalSeconds}`
-                    : `0:${timer.totalSeconds}`
+                        ? "1:00"
+                        : timer.totalSeconds < 10
+                            ? `0:0${timer.totalSeconds}`
+                            : `0:${timer.totalSeconds}`
                 }
             </span>
         </div>

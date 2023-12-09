@@ -25,6 +25,7 @@ const PageGame = () => {
     // updating board as the game starts
     useEffect(() => {
         restart();
+        // TODO: make logic to randomly give players their figures color
         setCurrentPlayer(whitePlayer);
     }, [])
 
