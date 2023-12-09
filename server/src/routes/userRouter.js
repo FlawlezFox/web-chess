@@ -5,4 +5,6 @@ const userRouter = express.Router();
 
 userRouter.post("/authorise", UserController.authorise);
 
+userRouter.get("/getUser/:id", UserController.getUser);
+
 export default userRouter;
