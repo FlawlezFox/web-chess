@@ -13,7 +13,30 @@ import styles from "./index.module.css";
 const PageHome = () => {
     const [mode, setMode] = useState<"Invite" | "Join">("Invite");
 
+    const [userName, setUserName] = useState<string>("");
+    const [errorMessage, setErrorMessage] = useState<string>("");
+
+    function handleSetUserName(event: React.ChangeEvent<HTMLInputElement>) {
+        setUserName(event.target.value.trim());
+
+        if (!validateUserName()) {
+            setErrorMessage('Логин должен состоять из латинских букв, цифр, "-", "_", длиной от 4 до 16 символов')
+        } else {
+            setErrorMessage("");
+        }
+    }
+
+    function validateUserName(){
+        const regex = /^[a-zA-Z0-9_-]{4,16}$/;
+
+        return regex.test(userName);
+    }
+
     function handleStartGame(mode: "Invite" | "Join") {
+        if (validateUserName() === false) {
+            return;
+        }
+
         setMode(mode);
 
         const modal: HTMLElement | null = document.getElementById("modalWindow");
@@ -41,6 +64,8 @@ const PageHome = () => {
                 <Input
                     className="inputLogin"
                     label="Введите логин:"
+                    errorMessage={errorMessage}
+                    onChange={(event) => handleSetUserName(event)}
                 />
 
                 <div className={styles.buttonsContainer}>

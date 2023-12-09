@@ -1,7 +1,9 @@
-interface IInput {
+import { InputHTMLAttributes } from "react";
+
+interface IInput extends InputHTMLAttributes<HTMLInputElement> {
     className: string;
     label: string;
-    onInput?: () => void;
+    errorMessage: string;
 }
 
 export default IInput;
