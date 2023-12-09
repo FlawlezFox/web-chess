@@ -1,4 +1,7 @@
-import { useState } from "react";
+import { FormEvent, useState } from "react";
+import { Player } from "../../models/Player";
+import { Colors } from "../../models/Colors";
+import { authorise } from "../../common/service/userS";
 
 // components
 import IconChessBoard from "../../assets/svg/icon-chess-board.svg?react";
@@ -46,6 +49,21 @@ const PageHome = () => {
         }
     }
 
+    function handleOnSubmit(event: FormEvent<HTMLFormElement>) {
+        event.preventDefault();
+
+        let player: Player;
+
+        // if player invites other player his color will be white, otherwise black
+        if (mode === "Invite") {
+            player = new Player(userName, Colors.WHITE);
+        } else {
+            player = new Player(userName, Colors.BLACK);
+        }
+
+        authorise(player);
+    }
+
     return (
         <div className="page-wrapper">
 
@@ -60,7 +78,7 @@ const PageHome = () => {
                 <h1 className={styles.header}>Шахматный гений</h1>
             </div>
 
-            <form action="" className={styles.formLogin} onSubmit={(event) => {event.preventDefault()}}>
+            <form action="" className={styles.formLogin} onSubmit={(event) => handleOnSubmit(event)}>
                 <Input
                     className="inputLogin"
                     label="Введите логин:"
