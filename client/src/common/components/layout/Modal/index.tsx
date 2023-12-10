@@ -1,5 +1,5 @@
 import IModal from "../../../interfaces/IModal";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { createNewGame } from "../../../service/gameS";
 
 // components
@@ -67,8 +67,19 @@ const ModalJoin = () => {
 }
 
 const ModalInvite = ({gameId}: InviteProps) => {
+    const [isClicked, setIsClicked] = useState<boolean>(false);
+
     function copyCode() {
+        if (gameId) {
+            navigator.clipboard.writeText(gameId);
+            setIsClicked(true);
+        }
         console.log(gameId);
+    }
+
+    function handleCloseModal() {
+        closeModal(); 
+        setIsClicked(false);
     }
 
     return (
@@ -76,7 +87,7 @@ const ModalInvite = ({gameId}: InviteProps) => {
             <div className={styles.modalHeader}>
                 <div className={styles.heading}>Создание игры</div>
 
-                <button className={styles.crossButton} onClick={closeModal}>
+                <button className={styles.crossButton} onClick={handleCloseModal}>
                     <IconCross className={styles.iconCross} />
                 </button>
             </div>
@@ -91,6 +102,7 @@ const ModalInvite = ({gameId}: InviteProps) => {
                         label="Скопировать код"
                         onClick={copyCode}
                     />
+                    <span className={styles.message}>{isClicked ? "Код скопирован в буфер обмена" : ""}</span>
                 </div>
             </div>
 

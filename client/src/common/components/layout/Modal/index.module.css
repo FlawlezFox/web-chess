@@ -1,6 +1,6 @@
 dialog {
-    width: 898px;
-    height: 424px;
+    width: 924px;
+    height: 464px;
 
     left: 50%;
     top: 50%;
@@ -62,8 +62,13 @@ dialog::backdrop {
 
 .codeContainer {
     margin-top: 24px;
+
     display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
     justify-content: space-between;
+
+    position: relative;
 }
 
 .codeLabel {
@@ -77,4 +82,12 @@ dialog::backdrop {
 
 .waitMessage {
     margin-top: 64px;
+}
+
+.message {
+    position: absolute;
+    bottom: 20px;
+    left: 376px;
+
+    color: var(--blue);
 }
