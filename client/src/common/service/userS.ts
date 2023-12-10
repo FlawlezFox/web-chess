@@ -9,6 +9,7 @@ export async function authorise(player: Player) {
             "Content-Type": "application/json"
         },
         body: JSON.stringify({
+            id: player.id,
             name: player.name,
             color: player.color,
         })

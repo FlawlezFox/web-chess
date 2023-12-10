@@ -4,8 +4,10 @@ class UserController {
     static async authorise(req, res) {
         try {
             const data = req.body;
+            const id = data.id;
             console.log(req.body);
-            await db.collection("users").doc().set(data);
+
+            await db.collection("users").doc(id).set(data);
             res.send("User was added successfuly");
         } catch (error) {
             res.status(404).send(error.message);
