@@ -1,4 +1,8 @@
 import IModal from "../../../interfaces/IModal";
+import { useEffect } from "react";
+import { createNewGame } from "../../../service/gameS";
+
+// components
 import Button from "../../ui/Button/index";
 import Input from "../../ui/Input/index";
 import IconCross from "../../../../assets/svg/icon-cross.svg?react";
@@ -6,13 +10,24 @@ import IconCross from "../../../../assets/svg/icon-cross.svg?react";
 // styles
 import styles from "./index.module.css";
 
-const Modal = ({ mode }: IModal) => {
+interface InviteProps {
+    gameId: string | undefined;
+}
+
+const Modal = ({ mode, player }: IModal) => {
+
+    useEffect(() => {
+        createNewGame(player);
+    }, [player]);
+
     return (
         <dialog id="modalWindow" className={styles.modalWindow}>
             {
                 mode === "Join"
                     ? <ModalJoin />
-                    : <ModalInvite />
+                    : <ModalInvite
+                        gameId={player?.gameId}
+                      />
             }
         </dialog>
     );
@@ -37,6 +52,7 @@ const ModalJoin = () => {
                 <Input
                     className="inputCode"
                     label="Введите код игры:"
+                    errorMessage="Неверный код или такой комнаты не существует"
                 />
 
                 <Button
@@ -50,7 +66,11 @@ const ModalJoin = () => {
     );
 }
 
-const ModalInvite = () => {
+const ModalInvite = ({gameId}: InviteProps) => {
+    function copyCode() {
+        console.log(gameId);
+    }
+
     return (
         <>
             <div className={styles.modalHeader}>
@@ -65,10 +85,11 @@ const ModalInvite = () => {
                 <div className={styles.codeLabel}>Комната доступна по коду: </div>
 
                 <div className={styles.codeContainer}>
-                    <span className={styles.code}>1F4IEx</span>
+                    <span className={styles.code}>{gameId}</span>
                     <Button
                         color="Blue"
                         label="Скопировать код"
+                        onClick={copyCode}
                     />
                 </div>
             </div>

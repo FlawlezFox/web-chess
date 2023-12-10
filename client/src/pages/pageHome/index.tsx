@@ -12,12 +12,14 @@ import Modal from "../../common/components/layout/Modal/index";
 
 // styles
 import styles from "./index.module.css";
+import { nanoid } from "nanoid";
 
 const PageHome = () => {
     const [mode, setMode] = useState<"Invite" | "Join">("Invite");
+    const [errorMessage, setErrorMessage] = useState<string>("");
 
     const [userName, setUserName] = useState<string>("");
-    const [errorMessage, setErrorMessage] = useState<string>("");
+    const [player, setPlayer] = useState<Player>();
 
     function handleSetUserName(event: React.ChangeEvent<HTMLInputElement>) {
         setUserName(event.target.value.trim());
@@ -58,16 +60,15 @@ const PageHome = () => {
             return;
         }
 
-        let player: Player;
-
-        // if player invites other player his color will be white, otherwise black
+        // if player invites other player his color will be white and he will receive game id, otherwise black
         if (mode === "Invite") {
-            player = new Player(userName, Colors.WHITE);
+            setPlayer(new Player(userName, Colors.WHITE, nanoid()));
         } else {
-            player = new Player(userName, Colors.BLACK);
+            setPlayer(new Player(userName, Colors.BLACK));
         }
 
-        authorise(player);
+        // UNCOMMENT WHEN TESTING IS OVER
+        // authorise(player);
     }
 
     return (
@@ -75,8 +76,8 @@ const PageHome = () => {
 
             {
                 mode === "Invite"
-                ? <Modal mode="Invite" />
-                : <Modal mode="Join" />
+                ? <Modal mode="Invite" player={player}/>
+                : <Modal mode="Join" player={player} />
             }
 
             <div className={styles.gameTitle}>
