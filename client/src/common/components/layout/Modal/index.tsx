@@ -1,6 +1,6 @@
 import IModal from "../../../interfaces/IModal";
 import { useEffect, useState } from "react";
-import { createNewGame } from "../../../service/gameS";
+import { createNewGame, reconnect } from "../../../service/gameS";
 
 // components
 import Button from "../../ui/Button/index";
@@ -10,23 +10,15 @@ import IconCross from "../../../../assets/svg/icon-cross.svg?react";
 // styles
 import styles from "./index.module.css";
 
-interface InviteProps {
-    gameId: string | undefined;
-}
-
 const Modal = ({ mode, player }: IModal) => {
-
-    useEffect(() => {
-        createNewGame(player);
-    }, [player]);
-
     return (
         <dialog id="modalWindow" className={styles.modalWindow}>
             {
                 mode === "Join"
                     ? <ModalJoin />
                     : <ModalInvite
-                        gameId={player?.gameId}
+                        mode={mode}
+                        player={player}
                       />
             }
         </dialog>
@@ -66,19 +58,30 @@ const ModalJoin = () => {
     );
 }
 
-const ModalInvite = ({gameId}: InviteProps) => {
+const ModalInvite = ({mode, player}: IModal) => {
     const [isClicked, setIsClicked] = useState<boolean>(false);
 
+    useEffect(() => {
+        createNewGame(player);
+    }, [player]);
+
     function copyCode() {
-        if (gameId) {
-            navigator.clipboard.writeText(gameId);
+        if (player?.gameId) {
+            navigator.clipboard.writeText(player.gameId);
             setIsClicked(true);
         }
-        console.log(gameId);
+        console.log(player?.gameId);
     }
 
     function handleCloseModal() {
-        closeModal(); 
+        /** After the modal closed by the user
+         *  we have to disconnect user from the room
+         *  and reconnect again so he won't wait for the player to join
+         *  the room with the old game ID
+         **/ 
+        closeModal();
+        player = undefined;
+        reconnect();
         setIsClicked(false);
     }
 
@@ -96,7 +99,7 @@ const ModalInvite = ({gameId}: InviteProps) => {
                 <div className={styles.codeLabel}>Комната доступна по коду: </div>
 
                 <div className={styles.codeContainer}>
-                    <span className={styles.code}>{gameId}</span>
+                    <span className={styles.code}>{player?.gameId || "Код не был сгенерирован"}</span>
                     <Button
                         color="Blue"
                         label={isClicked ? "Код скопирован" : "Скопировать код"}

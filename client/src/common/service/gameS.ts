@@ -8,3 +8,8 @@ const socket = io(SERVER);
 export function createNewGame(player: Player | undefined) {
     socket.emit("createNewGame", player);
 }
+
+export function reconnect() {
+    socket.disconnect();
+    socket.connect();
+}
