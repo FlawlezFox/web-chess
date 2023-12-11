@@ -83,11 +83,3 @@ dialog::backdrop {
 .waitMessage {
     margin-top: 64px;
 }
-
-.message {
-    position: absolute;
-    bottom: 20px;
-    left: 376px;
-
-    color: var(--blue);
-}

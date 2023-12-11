@@ -99,10 +99,9 @@ const ModalInvite = ({gameId}: InviteProps) => {
                     <span className={styles.code}>{gameId}</span>
                     <Button
                         color="Blue"
-                        label="Скопировать код"
+                        label={isClicked ? "Код скопирован" : "Скопировать код"}
                         onClick={copyCode}
                     />
-                    <span className={styles.message}>{isClicked ? "Код скопирован в буфер обмена" : ""}</span>
                 </div>
             </div>
 
