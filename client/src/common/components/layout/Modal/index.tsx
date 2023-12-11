@@ -1,6 +1,6 @@
 import IModal from "../../../interfaces/IModal";
-import { useEffect, useState } from "react";
-import { createNewGame, reconnect } from "../../../service/gameS";
+import { FormEvent, useEffect, useState } from "react";
+import { createNewGame, playerConnects, reconnect } from "../../../service/gameS";
 
 // components
 import Button from "../../ui/Button/index";
@@ -15,17 +15,37 @@ const Modal = ({ mode, player }: IModal) => {
         <dialog id="modalWindow" className={styles.modalWindow}>
             {
                 mode === "Join"
-                    ? <ModalJoin />
+                    ? <ModalJoin
+                        mode={mode}
+                        player={player}
+                    />
                     : <ModalInvite
                         mode={mode}
                         player={player}
-                      />
+                    />
             }
         </dialog>
     );
 }
 
-const ModalJoin = () => {
+const ModalJoin = ({mode, player}: IModal) => {
+    const [gameId, setGameId] = useState<string>("");
+    const [errorMessage, setErrorMessage] = useState<string>("");
+
+    function handleOnSubmit(event: FormEvent<HTMLFormElement>) {
+        event.preventDefault();
+
+        if(!player) {
+            return;
+        }
+
+        player.gameId = gameId;
+
+        console.log(player.gameId);
+
+        playerConnects(player);
+    }
+
     return (
         <>
             <div className={styles.modalHeader}>
@@ -38,20 +58,21 @@ const ModalJoin = () => {
 
             <form
                 action=""
-                onSubmit={(event) => { event.preventDefault() }}
+                onSubmit={(event) => handleOnSubmit(event)}
                 className={styles.joinForm}
             >
                 <Input
                     className="inputCode"
                     label="Введите код игры:"
-                    errorMessage="Неверный код или такой комнаты не существует"
+                    errorMessage={errorMessage}
+                    onChange={(event) => setGameId(event.target.value)}
                 />
 
                 <Button
                     color="Blue"
                     label="Войти в игру"
-                    isLink={true}
-                    to="/game"
+                    // isLink={true}
+                    // to="/game"
                 />
             </form>
         </>

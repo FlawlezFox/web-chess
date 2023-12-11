@@ -12,7 +12,7 @@ class Game {
     initializeGame() {
         this.socket.on("createNewGame", (player) => this.onCreateNewGame(player));
 
-        // socket.on("playerConnects", onPlayerConnects(io, socket, player));
+        this.socket.on("playerConnects", (player) => this.onPlayerConnects(player));
 
         // socket.on("playerDisconnects", onPlayerDisconnects(io, socket, player));
 
@@ -31,13 +31,36 @@ class Game {
 
         this.socket.join(player.gameId);
 
+        console.log(`First player ${player.name} has joined!`);
+
         this.socket.on("disconnecting", () => {
             console.log(this.socket.rooms);
         })
     }
 
-    onPlayerConnects() {
+    onPlayerConnects(player) {
+        let room = this.getRoom(player.gameId);
 
+        if (!room) {
+            console.log("Room with such ID not found!");
+            this.socket.emit("error", "Комната с таким кодом не найдена!");
+            return;
+        }
+
+        if (this.io.sockets.adapter.rooms.get(room)?.size > 1) {
+            console.log("You cannot join. There's already two players");
+            this.socket.emit("error", "Данная комната уже переполнена!");
+            return;
+        }
+
+        this.socket.join(player.gameId);
+
+        // emit the start game event when all players are in lobby
+        // emit event that notifies another player that second player connected
+        this.socket.to(player.gameId).emit("startGame", player);
+        this.socket.to(player.gameId).emit("playerConnected", player);
+
+        console.log(`Second player ${player.name} has joined!`);
     }
 
     onPlayerDisconnects() {
@@ -45,7 +68,19 @@ class Game {
     }
 
     isCreator(player) {
-        return player && player.gameId;
+        return player && player.color === "white";
+    }
+
+    getRoom(gameId) {
+        let result;
+
+        for (let room of this.io.sockets.adapter.rooms.keys()) {
+            if (room === gameId) {
+                result = room;
+            }
+        }
+
+        return result;
     }
 }
 

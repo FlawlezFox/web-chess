@@ -9,6 +9,10 @@ export function createNewGame(player: Player | undefined) {
     socket.emit("createNewGame", player);
 }
 
+export function playerConnects(player: Player | undefined) {
+    socket.emit("playerConnects", player);
+}
+
 export function reconnect() {
     socket.disconnect();
     socket.connect();
