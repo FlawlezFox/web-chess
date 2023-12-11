@@ -1,6 +1,6 @@
 import IModal from "../../../interfaces/IModal";
 import { FormEvent, useEffect, useState } from "react";
-import { createNewGame, playerConnects, reconnect } from "../../../service/gameS";
+import { createNewGame, socket, playerConnects, reconnect } from "../../../service/gameS";
 
 // components
 import Button from "../../ui/Button/index";
@@ -41,9 +41,11 @@ const ModalJoin = ({mode, player}: IModal) => {
 
         player.gameId = gameId;
 
-        console.log(player.gameId);
-
         playerConnects(player);
+
+        socket.on("error", (message) => {
+            setErrorMessage(message);
+        })
     }
 
     return (
@@ -81,10 +83,24 @@ const ModalJoin = ({mode, player}: IModal) => {
 
 const ModalInvite = ({mode, player}: IModal) => {
     const [isClicked, setIsClicked] = useState<boolean>(false);
+    const [waitMessage, setWaitMessage] = useState<string>("Ожидание подключения второго игрока...");
 
     useEffect(() => {
         createNewGame(player);
     }, [player]);
+
+    /** Listening to the event until second player is connected
+     *  after connection remove the listener
+     */
+    useEffect(() => {
+        socket.on("playerConnected", (secondPlayer) => {
+            setWaitMessage(`Второй игрок ${secondPlayer.name} подключился, переход в игру...`);
+        });
+
+        return () => {
+            socket.off("playerConnected");
+        }
+    }, [])
 
     function copyCode() {
         if (player?.gameId) {
@@ -129,7 +145,7 @@ const ModalInvite = ({mode, player}: IModal) => {
                 </div>
             </div>
 
-            <div className={styles.waitMessage}>Ожидание подключения игрока... </div>
+            <div className={styles.waitMessage}>{waitMessage}</div>
         </>
     );
 }
