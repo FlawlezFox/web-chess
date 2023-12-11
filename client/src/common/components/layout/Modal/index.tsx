@@ -43,6 +43,8 @@ const ModalJoin = ({mode, player}: IModal) => {
 
         playerConnects(player);
 
+        setErrorMessage("");
+
         socket.on("error", (message) => {
             setErrorMessage(message);
         })
@@ -120,6 +122,7 @@ const ModalInvite = ({mode, player}: IModal) => {
         player = undefined;
         reconnect();
         setIsClicked(false);
+        setWaitMessage("Ожидание подключения второго игрока...");
     }
 
     return (
