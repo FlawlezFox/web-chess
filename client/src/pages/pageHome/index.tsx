@@ -60,15 +60,18 @@ const PageHome = () => {
             return;
         }
 
+        let currentPlayer: Player;
+
         // if player invites other player his color will be white and he will receive game id, otherwise black
         if (mode === "Invite") {
-            setPlayer(new Player(userName, Colors.WHITE, nanoid()));
+            currentPlayer = new Player(userName, Colors.WHITE, nanoid());
         } else {
-            setPlayer(new Player(userName, Colors.BLACK));
+            currentPlayer = new Player(userName, Colors.BLACK);
         }
 
-        // UNCOMMENT WHEN TESTING IS OVER
-        // authorise(player);
+        setPlayer(currentPlayer);
+
+        authorise(currentPlayer);
     }
 
     return (

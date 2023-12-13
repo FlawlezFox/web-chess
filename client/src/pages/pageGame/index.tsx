@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { Player } from "../../models/Player";
 import { Colors } from "../../models/Colors";
+import { getUser } from "../../common/service/userS";
+import { useParams } from "react-router-dom";
 
 // components
 import IconChessBoard from "../../assets/svg/icon-chess-board.svg?react";
@@ -16,18 +18,37 @@ import { Board } from "../../models/Board";
 import styles from "./index.module.css";
 
 const PageGame = () => {
+    const { playerId } = useParams();
+
     const [board, setBoard] = useState<Board>(new Board);
 
-    const [whitePlayer, ] = useState<Player>(new Player("Cool_name1", Colors.WHITE));
-    const [blackPlayer, ] = useState<Player>(new Player("bestPlayer12", Colors.BLACK));
+    const [whitePlayer, setWhitePlayer] = useState<Player | null>(null);
+    const [blackPlayer, setBlackPlayer] = useState<Player | null>(null);
     const [currentPlayer, setCurrentPlayer] = useState<Player | null>(null);
 
     // updating board as the game starts
     useEffect(() => {
         restart();
-        // TODO: make logic to randomly give players their figures color
-        setCurrentPlayer(whitePlayer);
-    }, [])
+        
+        // TODO: handle this error properly
+        if (!playerId) {
+            console.log("Произошла ошибка!");
+            return;
+        }
+
+        // get the player and set him as current player
+        getUser(playerId).then(player => {
+            if (player.color === Colors.WHITE) {
+                setWhitePlayer(player);
+                setCurrentPlayer(player);
+            } else {
+                setBlackPlayer(player);
+            }
+        }).catch(error => {
+            console.log(error);
+        });
+
+    }, [playerId])
 
     function restart() {
         const newBoard = new Board();
@@ -52,8 +73,8 @@ const PageGame = () => {
                     <IconProfile className={styles.iconProfile} />
                     {
                         currentPlayer?.color === Colors.WHITE 
-                        ? <span className={styles.userName}>{whitePlayer.name} (белые)</span>
-                        : <span className={styles.userName}>{blackPlayer.name} (черные)</span>
+                        ? <span className={styles.userName}>{whitePlayer?.name || "Игрок не подключен"} (белые)</span>
+                        : <span className={styles.userName}>{blackPlayer?.name || "Игрок не подключен"} (черные)</span>
                     }
                 </div>
 

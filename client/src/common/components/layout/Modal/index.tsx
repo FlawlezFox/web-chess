@@ -1,6 +1,7 @@
 import IModal from "../../../interfaces/IModal";
 import { FormEvent, useEffect, useState } from "react";
 import { createNewGame, socket, playerConnects, reconnect } from "../../../service/gameS";
+import { Player } from "../../../../models/Player";
 
 // components
 import Button from "../../ui/Button/index";
@@ -9,6 +10,8 @@ import IconCross from "../../../../assets/svg/icon-cross.svg?react";
 
 // styles
 import styles from "./index.module.css";
+import { useNavigate } from "react-router-dom";
+
 
 const Modal = ({ mode, player }: IModal) => {
     return (
@@ -32,6 +35,8 @@ const ModalJoin = ({mode, player}: IModal) => {
     const [gameId, setGameId] = useState<string>("");
     const [errorMessage, setErrorMessage] = useState<string>("");
 
+    const navigate = useNavigate();
+
     function handleOnSubmit(event: FormEvent<HTMLFormElement>) {
         event.preventDefault();
 
@@ -47,6 +52,11 @@ const ModalJoin = ({mode, player}: IModal) => {
 
         socket.on("error", (message) => {
             setErrorMessage(message);
+        });
+
+        socket.on("startGame", (firstPlayer) => {
+            console.log("startGame");
+            navigate(`/game/${player.id}`);
         })
     }
 
@@ -87,6 +97,8 @@ const ModalInvite = ({mode, player}: IModal) => {
     const [isClicked, setIsClicked] = useState<boolean>(false);
     const [waitMessage, setWaitMessage] = useState<string>("Ожидание подключения второго игрока...");
 
+    const navigate = useNavigate();
+
     useEffect(() => {
         createNewGame(player);
     }, [player]);
@@ -97,12 +109,19 @@ const ModalInvite = ({mode, player}: IModal) => {
     useEffect(() => {
         socket.on("playerConnected", (secondPlayer) => {
             setWaitMessage(`Второй игрок ${secondPlayer.name} подключился, переход в игру...`);
+
+            if (!player) {
+                setWaitMessage("Возникла ошибка, авторизуйтесь снова");
+                return;
+            }
+
+            navigate(`/game/${player.id}`); // navigating player to the room, saving his unique id in the url
         });
 
         return () => {
             socket.off("playerConnected");
         }
-    }, [])
+    }, [player, navigate]);
 
     function copyCode() {
         if (player?.gameId) {
