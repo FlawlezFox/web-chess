@@ -15,3 +15,9 @@ export async function authorise(player: Player) {
         })
     });
 }
+
+export async function getUser(id: string) {
+    const user = await fetch(`${SERVER}/api/user/getUser/${id}`);
+
+    return user.json();
+}
