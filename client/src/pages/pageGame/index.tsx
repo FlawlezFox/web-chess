@@ -16,6 +16,7 @@ import { Board } from "../../models/Board";
 
 // styles
 import styles from "./index.module.css";
+import { socket } from "../../common/service/gameS";
 
 const PageGame = () => {
     const { playerId } = useParams();
@@ -38,17 +39,19 @@ const PageGame = () => {
 
         // get the player and set him as current player
         getUser(playerId).then(player => {
-            if (player.color === Colors.WHITE) {
-                setWhitePlayer(player);
-                setCurrentPlayer(player);
-            } else {
-                setBlackPlayer(player);
-            }
+            setPlayers(player);
         }).catch(error => {
             console.log(error);
         });
 
-    }, [playerId])
+        // in this event we're getting other player's data
+        socket.on("gameStarted", (player) => {
+            console.log("GAME STARTED");
+
+            setPlayers(player);
+        });
+
+    }, [playerId]);
 
     function restart() {
         const newBoard = new Board();
@@ -59,6 +62,15 @@ const PageGame = () => {
 
     function swapPlayer() {
         setCurrentPlayer(currentPlayer?.color === Colors.WHITE ? blackPlayer : whitePlayer);
+    }
+
+    function setPlayers(player: Player) {
+        if (player.color === Colors.WHITE) {
+            setWhitePlayer(player);
+            setCurrentPlayer(player);
+        } else {
+            setBlackPlayer(player);
+        }
     }
 
     return (

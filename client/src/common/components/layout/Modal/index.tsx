@@ -1,6 +1,6 @@
 import IModal from "../../../interfaces/IModal";
 import { FormEvent, useEffect, useState } from "react";
-import { createNewGame, socket, playerConnects, reconnect } from "../../../service/gameS";
+import { createNewGame, socket, playerConnects, reconnect, startGame } from "../../../service/gameS";
 import { Player } from "../../../../models/Player";
 
 // components
@@ -52,12 +52,14 @@ const ModalJoin = ({mode, player}: IModal) => {
 
         socket.on("error", (message) => {
             setErrorMessage(message);
+            return;
         });
 
-        socket.on("startGame", (firstPlayer) => {
-            console.log("startGame");
-            navigate(`/game/${player.id}`);
-        })
+        // emiting event for the first player
+        startGame(player);
+
+        // TODO: HANDLE ERRORs !!!!!!!!!!!!!!!!!
+        navigate(`/game/${player.id}`);
     }
 
     return (
@@ -114,6 +116,9 @@ const ModalInvite = ({mode, player}: IModal) => {
                 setWaitMessage("Возникла ошибка, авторизуйтесь снова");
                 return;
             }
+
+            // emiting event for the second player
+            startGame(player);
 
             navigate(`/game/${player.id}`); // navigating player to the room, saving his unique id in the url
         });
