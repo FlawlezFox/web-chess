@@ -14,6 +14,8 @@ class Game {
 
         this.socket.on("playerConnects", (player) => this.onPlayerConnects(player));
 
+        this.socket.on("startGame", (player) => {this.onStartGame(player)});
+
         // socket.on("playerDisconnects", onPlayerDisconnects(io, socket, player));
 
         // socket.on("playerGivesUp", onPlayerGivesUp(io, socket, player));
@@ -57,10 +59,15 @@ class Game {
 
         // emit the start game event when all players are in lobby
         // emit event that notifies another player that second player connected
-        this.socket.to(player.gameId).emit("startGame", player);
         this.socket.to(player.gameId).emit("playerConnected", player);
 
         console.log(`Second player ${player.name} has joined!`);
+    }
+
+    onStartGame(player) {
+        // emit event with data from player
+        console.log("GAME STARTED: " + player.name);
+        this.socket.to(player.gameId).emit("gameStarted", player);
     }
 
     onPlayerDisconnects() {
