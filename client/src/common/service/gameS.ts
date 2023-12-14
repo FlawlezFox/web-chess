@@ -13,8 +13,8 @@ export function playerConnects(player: Player | undefined) {
     socket.emit("playerConnects", player);
 }
 
-export function startGame(player: Player | undefined) {
-    socket.emit("startGame", player);
+export function sendDataToSecondPlayer(player: Player | null) {
+    socket.emit("sendDataToSecondPlayer", player);
 }
 
 export function reconnect() {

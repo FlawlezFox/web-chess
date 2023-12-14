@@ -1,7 +1,6 @@
 import IModal from "../../../interfaces/IModal";
 import { FormEvent, useEffect, useState } from "react";
-import { createNewGame, socket, playerConnects, reconnect, startGame } from "../../../service/gameS";
-import { Player } from "../../../../models/Player";
+import { createNewGame, socket, playerConnects, reconnect, sendDataToSecondPlayer } from "../../../service/gameS";
 
 // components
 import Button from "../../ui/Button/index";
@@ -31,7 +30,7 @@ const Modal = ({ mode, player }: IModal) => {
     );
 }
 
-const ModalJoin = ({mode, player}: IModal) => {
+const ModalJoin = ({ mode, player }: IModal) => {
     const [gameId, setGameId] = useState<string>("");
     const [errorMessage, setErrorMessage] = useState<string>("");
 
@@ -40,7 +39,7 @@ const ModalJoin = ({mode, player}: IModal) => {
     function handleOnSubmit(event: FormEvent<HTMLFormElement>) {
         event.preventDefault();
 
-        if(!player) {
+        if (!player) {
             return;
         }
 
@@ -54,9 +53,6 @@ const ModalJoin = ({mode, player}: IModal) => {
             setErrorMessage(message);
             return;
         });
-
-        // emiting event for the first player
-        startGame(player);
 
         // TODO: HANDLE ERRORs !!!!!!!!!!!!!!!!!
         navigate(`/game/${player.id}`);
@@ -87,17 +83,18 @@ const ModalJoin = ({mode, player}: IModal) => {
                 <Button
                     color="Blue"
                     label="Войти в игру"
-                    // isLink={true}
-                    // to="/game"
+                // isLink={true}
+                // to="/game"
                 />
             </form>
         </>
     );
 }
 
-const ModalInvite = ({mode, player}: IModal) => {
+const ModalInvite = ({ mode, player }: IModal) => {
     const [isClicked, setIsClicked] = useState<boolean>(false);
     const [waitMessage, setWaitMessage] = useState<string>("Ожидание подключения второго игрока...");
+    const [gameStarted, setGameStarted] = useState<boolean>(false);
 
     const navigate = useNavigate();
 
@@ -110,17 +107,17 @@ const ModalInvite = ({mode, player}: IModal) => {
      */
     useEffect(() => {
         socket.on("playerConnected", (secondPlayer) => {
-            setWaitMessage(`Второй игрок ${secondPlayer.name} подключился, переход в игру...`);
-
             if (!player) {
                 setWaitMessage("Возникла ошибка, авторизуйтесь снова");
                 return;
             }
 
-            // emiting event for the second player
-            startGame(player);
+            // TODO: FIX SENDING 2 REQUESTS AT ONCe
+            sendDataToSecondPlayer(player);
 
-            navigate(`/game/${player.id}`); // navigating player to the room, saving his unique id in the url
+            setWaitMessage(`Второй игрок ${secondPlayer.name} подключился, переход в игру...`);
+
+            navigate(`/game/${player?.id}&${secondPlayer.id}`); // navigating player to the room, saving his and opponent unique id in the url
         });
 
         return () => {
@@ -141,7 +138,7 @@ const ModalInvite = ({mode, player}: IModal) => {
          *  we have to disconnect user from the room
          *  and reconnect again so he won't wait for the player to join
          *  the room with the old game ID
-         **/ 
+         **/
         closeModal();
         player = undefined;
         reconnect();

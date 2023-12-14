@@ -7,14 +7,14 @@ class Game {
         this.io = io;
         this.socket = socket;
         this.currentSessions.push(socket);
-    }
+    }   
 
     initializeGame() {
         this.socket.on("createNewGame", (player) => this.onCreateNewGame(player));
 
         this.socket.on("playerConnects", (player) => this.onPlayerConnects(player));
 
-        this.socket.on("startGame", (player) => {this.onStartGame(player)});
+        this.socket.on("sendDataToSecondPlayer", (player) => {this.onSendDataToSecondPlayer(player)});
 
         // socket.on("playerDisconnects", onPlayerDisconnects(io, socket, player));
 
@@ -33,7 +33,7 @@ class Game {
 
         this.socket.join(player.gameId);
 
-        console.log(`First player ${player.name} has joined!`);
+        console.log(`First player ${player.name} has joined! His socket: ${this.socket.id}`);
 
         this.socket.on("disconnecting", () => {
             console.log(this.socket.rooms);
@@ -57,17 +57,18 @@ class Game {
 
         this.socket.join(player.gameId);
 
-        // emit the start game event when all players are in lobby
         // emit event that notifies another player that second player connected
         this.socket.to(player.gameId).emit("playerConnected", player);
 
-        console.log(`Second player ${player.name} has joined!`);
+        console.log(`Second player ${player.name} has joined! His socket: ${this.socket.id}`);
+
+        console.log(this.io.sockets.adapter.rooms);
     }
 
-    onStartGame(player) {
+    onSendDataToSecondPlayer(player) {
         // emit event with data from player
-        console.log("GAME STARTED: " + player.name);
-        this.socket.to(player.gameId).emit("gameStarted", player);
+        console.log("Requested data: " + player.name + " " + player.gameId);
+        this.socket.to(player.gameId).emit("getDataOfFirstPlayer", player);
     }
 
     onPlayerDisconnects() {

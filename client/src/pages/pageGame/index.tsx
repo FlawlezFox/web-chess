@@ -3,6 +3,7 @@ import { Player } from "../../models/Player";
 import { Colors } from "../../models/Colors";
 import { getUser } from "../../common/service/userS";
 import { useParams } from "react-router-dom";
+import { socket } from "../../common/service/gameS";
 
 // components
 import IconChessBoard from "../../assets/svg/icon-chess-board.svg?react";
@@ -16,7 +17,6 @@ import { Board } from "../../models/Board";
 
 // styles
 import styles from "./index.module.css";
-import { socket } from "../../common/service/gameS";
 
 const PageGame = () => {
     const { playerId } = useParams();
@@ -27,31 +27,58 @@ const PageGame = () => {
     const [blackPlayer, setBlackPlayer] = useState<Player | null>(null);
     const [currentPlayer, setCurrentPlayer] = useState<Player | null>(null);
 
+    const [yourColor, setYourColor] = useState<Colors>();
+
     // updating board as the game starts
     useEffect(() => {
-        restart();
-        
-        // TODO: handle this error properly
-        if (!playerId) {
-            console.log("Произошла ошибка!");
-            return;
+        restart();       
+
+        // in this method we're getting our player
+        getPlayers();
+
+        // second player gets data of first player
+        socket.on("getDataOfFirstPlayer", (player) => {
+            console.log("First player: " + player.name);
+
+            setWhitePlayer(player);
+            setCurrentPlayer(player);
+        });
+
+        return () => {
+            socket.off("getDataOffFirstPlayer");
         }
+    }, []);
 
-        // get the player and set him as current player
-        getUser(playerId).then(player => {
-            setPlayers(player);
-        }).catch(error => {
-            console.log(error);
-        });
+    async function getPlayers() {
+        /** if you created the game 
+         *  url will contain your id (first) and id of your opponent (second)
+         *  that splited by '&' symbol
+         */
+        if (playerId?.includes("&")) {
+            const firstAndSecondId = playerId.split("&");
+            const firstId = firstAndSecondId[0];
+            const secondId = firstAndSecondId[1];
 
-        // in this event we're getting other player's data
-        socket.on("gameStarted", (player) => {
-            console.log("GAME STARTED");
+            const firstPlayer: Player = await getUser(firstId);
+            const secondPlayer: Player = await getUser(secondId);
 
-            setPlayers(player);
-        });
+            console.log("Your player: " + firstPlayer.name);
+            setYourColor(firstPlayer.color);
 
-    }, [playerId]);
+            setWhitePlayer(firstPlayer);
+            setCurrentPlayer(firstPlayer);
+            setBlackPlayer(secondPlayer);
+        } else if (playerId) {
+            const secondPlayer: Player = await getUser(playerId);
+
+            console.log("Your player: " + secondPlayer.name);
+            setYourColor(secondPlayer.color);
+
+            setBlackPlayer(secondPlayer);
+        } else {
+            console.log("No players was found!");
+        }
+    }
 
     function restart() {
         const newBoard = new Board();
@@ -62,15 +89,6 @@ const PageGame = () => {
 
     function swapPlayer() {
         setCurrentPlayer(currentPlayer?.color === Colors.WHITE ? blackPlayer : whitePlayer);
-    }
-
-    function setPlayers(player: Player) {
-        if (player.color === Colors.WHITE) {
-            setWhitePlayer(player);
-            setCurrentPlayer(player);
-        } else {
-            setBlackPlayer(player);
-        }
     }
 
     return (
@@ -84,9 +102,9 @@ const PageGame = () => {
                 <div className={styles.userInfo}>
                     <IconProfile className={styles.iconProfile} />
                     {
-                        currentPlayer?.color === Colors.WHITE 
-                        ? <span className={styles.userName}>{whitePlayer?.name || "Игрок не подключен"} (белые)</span>
-                        : <span className={styles.userName}>{blackPlayer?.name || "Игрок не подключен"} (черные)</span>
+                        currentPlayer?.color === Colors.WHITE
+                            ? <span className={styles.userName}>{whitePlayer?.name || "Игрок не подключен"} ({whitePlayer?.color === yourColor && "ВЫ"} белые)</span>
+                            : <span className={styles.userName}>{blackPlayer?.name || "Игрок не подключен"} ({blackPlayer?.color === yourColor && "ВЫ"} черные)</span>
                     }
                 </div>
 
@@ -102,13 +120,13 @@ const PageGame = () => {
                     currentPlayer={currentPlayer}
                     swapPlayer={swapPlayer}
                 />
-                
+
                 <HistoryPanel
                     moves={board.moves}
                 />
             </div>
         </div>
-    ); 
+    );
 }
 
 export default PageGame;
