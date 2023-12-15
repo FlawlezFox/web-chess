@@ -33,20 +33,7 @@ const PageGame = () => {
     useEffect(() => {
         restart();       
 
-        // in this method we're getting our player
         getPlayers();
-
-        // second player gets data of first player
-        socket.on("getDataOfFirstPlayer", (player) => {
-            console.log("First player: " + player.name);
-
-            setWhitePlayer(player);
-            setCurrentPlayer(player);
-        });
-
-        return () => {
-            socket.off("getDataOffFirstPlayer");
-        }
     }, []);
 
     async function getPlayers() {
@@ -54,27 +41,26 @@ const PageGame = () => {
          *  url will contain your id (first) and id of your opponent (second)
          *  that splited by '&' symbol
          */
-        if (playerId?.includes("&")) {
+        if (playerId) {
             const firstAndSecondId = playerId.split("&");
-            const firstId = firstAndSecondId[0];
-            const secondId = firstAndSecondId[1];
+            const yourId = firstAndSecondId[0];
+            const opponentId = firstAndSecondId[1];
 
-            const firstPlayer: Player = await getUser(firstId);
-            const secondPlayer: Player = await getUser(secondId);
+            const yourPlayer: Player = await getUser(yourId);
+            const opponentPlayer: Player = await getUser(opponentId);
 
-            console.log("Your player: " + firstPlayer.name);
-            setYourColor(firstPlayer.color);
+            console.log("Your player: " + yourPlayer.name);
+            setYourColor(yourPlayer.color);
 
-            setWhitePlayer(firstPlayer);
-            setCurrentPlayer(firstPlayer);
-            setBlackPlayer(secondPlayer);
-        } else if (playerId) {
-            const secondPlayer: Player = await getUser(playerId);
-
-            console.log("Your player: " + secondPlayer.name);
-            setYourColor(secondPlayer.color);
-
-            setBlackPlayer(secondPlayer);
+            if (yourPlayer.color === Colors.WHITE) {
+                setWhitePlayer(yourPlayer);
+                setCurrentPlayer(yourPlayer);
+                setBlackPlayer(opponentPlayer);
+            } else {
+                setWhitePlayer(opponentPlayer);
+                setCurrentPlayer(opponentPlayer);
+                setBlackPlayer(yourPlayer);
+            }
         } else {
             console.log("No players was found!");
         }

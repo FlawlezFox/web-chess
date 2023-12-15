@@ -1,6 +1,7 @@
 import IModal from "../../../interfaces/IModal";
 import { FormEvent, useEffect, useState } from "react";
 import { createNewGame, socket, playerConnects, reconnect, sendDataToSecondPlayer } from "../../../service/gameS";
+import { useNavigate } from "react-router-dom";
 
 // components
 import Button from "../../ui/Button/index";
@@ -9,7 +10,6 @@ import IconCross from "../../../../assets/svg/icon-cross.svg?react";
 
 // styles
 import styles from "./index.module.css";
-import { useNavigate } from "react-router-dom";
 
 
 const Modal = ({ mode, player }: IModal) => {
@@ -43,6 +43,11 @@ const ModalJoin = ({ mode, player }: IModal) => {
             return;
         }
 
+        if (gameId === "") {
+            setErrorMessage("Введите код игры");
+            return;
+        }
+
         player.gameId = gameId;
 
         playerConnects(player);
@@ -54,8 +59,10 @@ const ModalJoin = ({ mode, player }: IModal) => {
             return;
         });
 
-        // TODO: HANDLE ERRORs !!!!!!!!!!!!!!!!!
-        navigate(`/game/${player.id}`);
+        // redirect only after first player got 'playerConnected' event
+        socket.once("getDataOfFirstPlayer", (firstPlayer) => {
+            navigate(`/game/${player.id}&${firstPlayer.id}`);
+        });
     }
 
     return (
@@ -94,7 +101,6 @@ const ModalJoin = ({ mode, player }: IModal) => {
 const ModalInvite = ({ mode, player }: IModal) => {
     const [isClicked, setIsClicked] = useState<boolean>(false);
     const [waitMessage, setWaitMessage] = useState<string>("Ожидание подключения второго игрока...");
-    const [gameStarted, setGameStarted] = useState<boolean>(false);
 
     const navigate = useNavigate();
 
@@ -112,7 +118,6 @@ const ModalInvite = ({ mode, player }: IModal) => {
                 return;
             }
 
-            // TODO: FIX SENDING 2 REQUESTS AT ONCe
             sendDataToSecondPlayer(player);
 
             setWaitMessage(`Второй игрок ${secondPlayer.name} подключился, переход в игру...`);
