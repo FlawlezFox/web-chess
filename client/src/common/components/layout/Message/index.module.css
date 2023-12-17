@@ -1,4 +1,4 @@
-.confirmWindow {
+.messageWindow {
     width: 490px;
     height: 274px;
 
@@ -16,12 +16,11 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: space-between;
 
-    z-index: var(--ui-index-3);
+    z-index: var(--ui-index-2);
 }
 
-.confirmWindow::backdrop {
+.messageWindow::backdrop {
     background-color: rgba(0, 0, 0, .6);
 }
 
@@ -36,34 +35,23 @@
     z-index: var(--ui-index-1);
 }
 
-.confirmMessage {
-    margin-top: 64px;
-
+.message,
+.description,
+.redirectMessage {
     color: var(--black);
-    font-size: 2em;
     text-align: center;
 }
 
-.buttons {
-    width: 100%;
+.message {
+    margin-top: 24px;
 
-    display: flex;
-    justify-content: space-between;
+    font-size: 2em;
 }
 
-.confirmWindow button {
-    width: 104px;
-    height: 64px;
+.description {
+    margin-top: 12px;
 }
 
-.confirmWindow button:hover {
-    background-color: var(--black);
-}
-
-.buttonYes {
-    background-color: var(--blue);
-}
-
-.buttonNo {
-    background-color: var(--orange);
+.redirectMessage {
+    margin-top: auto;
 }
