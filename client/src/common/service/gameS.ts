@@ -17,6 +17,10 @@ export function sendDataToSecondPlayer(player: Player | null) {
     socket.emit("sendDataToSecondPlayer", player);
 }
 
+export function playerLeftGamePage() {
+    socket.emit("playerLeftGamePage");
+}
+
 export function reconnect() {
     socket.disconnect();
     socket.connect();

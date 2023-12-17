@@ -2,10 +2,12 @@ class Game {
     io;
     socket;
     currentSessions = []; // all active socket connections
+    currentRoom;
 
     constructor(io, socket) {
         this.io = io;
         this.socket = socket;
+        this.currentRoom = "";
         this.currentSessions.push(socket);
     }   
 
@@ -16,7 +18,11 @@ class Game {
 
         this.socket.on("sendDataToSecondPlayer", (player) => {this.onSendDataToSecondPlayer(player)});
 
-        // socket.on("playerDisconnects", onPlayerDisconnects(io, socket, player));
+        this.socket.on("playerLeftGamePage", () => this.onPlayerLeftGamePage());
+
+        this.socket.on("disconnect", () => {
+            this.onPlayerDisconnects();
+        });
 
         // socket.on("playerGivesUp", onPlayerGivesUp(io, socket, player));
 
@@ -34,14 +40,12 @@ class Game {
         this.socket.join(player.gameId);
 
         console.log(`First player ${player.name} has joined! His socket: ${this.socket.id}`);
-
-        this.socket.on("disconnecting", () => {
-            console.log(this.socket.rooms);
-        })
     }
 
     onPlayerConnects(player) {
         let room = this.getRoom(player.gameId);
+
+        this.currentRoom = room;
 
         if (!room) {
             console.log("Room with such ID not found!");
@@ -68,11 +72,23 @@ class Game {
     onSendDataToSecondPlayer(player) {
         // emit event with data from player
         console.log("Requested data: " + player.name + " " + player.gameId);
+        this.currentRoom = player.gameId;
         this.socket.to(player.gameId).emit("getDataOfFirstPlayer", player);
     }
 
     onPlayerDisconnects() {
+        this.socket.to(this.currentRoom).emit("playerDisconnected");
 
+        if (this.currentRoom) {
+            this.socket.leave(this.currentRoom);
+        }
+
+        console.log(`Player left...`);
+    }
+
+    onPlayerLeftGamePage() {
+        this.socket.disconnect();
+        console.log("Player left game page...");
     }
 
     isCreator(player) {

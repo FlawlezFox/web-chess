@@ -2,8 +2,8 @@ import { useEffect, useState } from "react";
 import { Player } from "../../models/Player";
 import { Colors } from "../../models/Colors";
 import { getUser } from "../../common/service/userS";
-import { useParams } from "react-router-dom";
-import { socket } from "../../common/service/gameS";
+import { useBlocker, useLocation, useParams } from "react-router-dom";
+import { playerLeftGamePage, socket } from "../../common/service/gameS";
 
 // components
 import IconChessBoard from "../../assets/svg/icon-chess-board.svg?react";
@@ -17,6 +17,7 @@ import { Board } from "../../models/Board";
 
 // styles
 import styles from "./index.module.css";
+import Confirm from "../../common/components/layout/Confirm";
 
 const PageGame = () => {
     const { playerId } = useParams();
@@ -29,11 +30,38 @@ const PageGame = () => {
 
     const [yourColor, setYourColor] = useState<Colors>();
 
+    const blocker = useBlocker(({ currentLocation, nextLocation }) => {
+        return currentLocation.pathname !== nextLocation.pathname;
+    });
+
     // updating board as the game starts
     useEffect(() => {
-        restart();       
+        restart();
 
         getPlayers();
+    }, []);
+
+    useEffect(() => {
+        socket.on('playerDisconnected', () => {
+            console.log('Второй игрок был отключен!');
+        });
+
+        return () => {
+            socket.off('playerDisconnected');
+        };
+    }, []);
+
+    useEffect(() => {
+        const handleUnload = (event: BeforeUnloadEvent) => {
+            event.preventDefault();
+            event.returnValue = ""; // For some browsers to show a confirmation dialog
+        };
+
+        window.addEventListener("beforeunload", handleUnload);
+
+        return () => {
+            window.removeEventListener("beforeunload", handleUnload);
+        };
     }, []);
 
     async function getPlayers() {
@@ -78,40 +106,56 @@ const PageGame = () => {
     }
 
     return (
-        <div className={styles.pageWrapper}>
-            <div className={styles.gameTitle}>
-                <IconChessBoard className={styles.iconChessBoard} />
-                <h1 className={styles.header}>Шахматный гений</h1>
-            </div>
+        <>
+            {
+                blocker.state === 'blocked'
+                    ? <Confirm
+                        message="Вы точно хотите покинуть игру?"
+                        handleConfirm={() => {
+                            playerLeftGamePage();
+                            blocker.proceed && blocker.proceed();
+                        }}
+                        handleCancel={() => blocker.reset && blocker.reset()}
+                        open={true}
+                    />
+                    : null
+            }
 
-            <div className={styles.gameInfo}>
-                <div className={styles.userInfo}>
-                    <IconProfile className={styles.iconProfile} />
-                    {
-                        currentPlayer?.color === Colors.WHITE
-                            ? <span className={styles.userName}>{whitePlayer?.name || "Игрок не подключен"} ({whitePlayer?.color === yourColor && "ВЫ"} белые)</span>
-                            : <span className={styles.userName}>{blackPlayer?.name || "Игрок не подключен"} ({blackPlayer?.color === yourColor && "ВЫ"} черные)</span>
-                    }
+            <div className={styles.pageWrapper}>
+                <div className={styles.gameTitle}>
+                    <IconChessBoard className={styles.iconChessBoard} />
+                    <h1 className={styles.header}>Шахматный гений</h1>
                 </div>
 
-                <Timer
-                    currentPlayer={currentPlayer}
-                />
-            </div>
+                <div className={styles.gameInfo}>
+                    <div className={styles.userInfo}>
+                        <IconProfile className={styles.iconProfile} />
+                        {
+                            currentPlayer?.color === Colors.WHITE
+                                ? <span className={styles.userName}>{whitePlayer?.name || "Игрок не подключен"} ({whitePlayer?.color === yourColor && "ВЫ"} белые)</span>
+                                : <span className={styles.userName}>{blackPlayer?.name || "Игрок не подключен"} ({blackPlayer?.color === yourColor && "ВЫ"} черные)</span>
+                        }
+                    </div>
 
-            <div className={styles.gameContainer}>
-                <BoardComponent
-                    board={board}
-                    setBoard={setBoard}
-                    currentPlayer={currentPlayer}
-                    swapPlayer={swapPlayer}
-                />
+                    <Timer
+                        currentPlayer={currentPlayer}
+                    />
+                </div>
 
-                <HistoryPanel
-                    moves={board.moves}
-                />
+                <div className={styles.gameContainer}>
+                    <BoardComponent
+                        board={board}
+                        setBoard={setBoard}
+                        currentPlayer={currentPlayer}
+                        swapPlayer={swapPlayer}
+                    />
+
+                    <HistoryPanel
+                        moves={board.moves}
+                    />
+                </div>
             </div>
-        </div>
+        </>
     );
 }
 
