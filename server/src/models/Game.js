@@ -9,18 +9,23 @@ class Game {
         this.socket = socket;
         this.currentRoom = "";
         this.currentSessions.push(socket);
-    }   
+    }
 
     initializeGame() {
         this.socket.on("createNewGame", (player) => this.onCreateNewGame(player));
 
         this.socket.on("playerConnects", (player) => this.onPlayerConnects(player));
 
-        this.socket.on("sendDataToSecondPlayer", (player) => {this.onSendDataToSecondPlayer(player)});
+        this.socket.on("sendDataToSecondPlayer", (player) => { this.onSendDataToSecondPlayer(player) });
 
         this.socket.on("playerLeftGamePage", () => this.onPlayerLeftGamePage());
 
-        this.socket.on("disconnect", () => {
+        this.socket.on("disconnect", (reason) => {
+            if (reason === "io server disconnect") {
+                // reconnect if disconnection was initiated by the server
+                this.socket.connect();
+            }
+
             this.onPlayerDisconnects();
         });
 
