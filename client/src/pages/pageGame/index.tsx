@@ -11,13 +11,14 @@ import IconProfile from "../../assets/svg/icon-profile.svg?react";
 import BoardComponent from "../../common/components/layout/BoardComponent";
 import HistoryPanel from "../../common/components/layout/HistoryPanel";
 import Timer from "../../common/components/layout/Timer";
+import Confirm from "../../common/components/layout/Confirm";
+import Message from "../../common/components/layout/Message";
 
 // models
 import { Board } from "../../models/Board";
 
 // styles
 import styles from "./index.module.css";
-import Confirm from "../../common/components/layout/Confirm";
 
 const PageGame = () => {
     const { playerId } = useParams();
@@ -30,8 +31,10 @@ const PageGame = () => {
 
     const [yourColor, setYourColor] = useState<Colors>();
 
+    const [isMessageOpen, setIsMessageOpen] = useState<boolean>(false);
+
     const blocker = useBlocker(({ currentLocation, nextLocation }) => {
-        return currentLocation.pathname !== nextLocation.pathname;
+        return currentLocation.pathname !== nextLocation.pathname && isMessageOpen === false;
     });
 
     // updating board as the game starts
@@ -43,11 +46,14 @@ const PageGame = () => {
 
     useEffect(() => {
         socket.on('playerDisconnected', () => {
-            console.log('Второй игрок был отключен!');
+            console.log("Другой игрок покинул игру");
+            // open window that tells other player about winner
+            setIsMessageOpen(true);
         });
 
         return () => {
             socket.off('playerDisconnected');
+            setIsMessageOpen(false);
         };
     }, []);
 
@@ -108,7 +114,7 @@ const PageGame = () => {
     return (
         <>
             {
-                blocker.state === 'blocked'
+                blocker.state === 'blocked' && isMessageOpen === false
                     ? <Confirm
                         message="Вы точно хотите покинуть игру?"
                         handleConfirm={() => {
@@ -117,6 +123,17 @@ const PageGame = () => {
                         }}
                         handleCancel={() => blocker.reset && blocker.reset()}
                         open={true}
+                    />
+                    : null
+            }
+
+            {
+                isMessageOpen ?
+                    <Message
+                        icon="win"
+                        message={`Игрок победил`}
+                        description="Игрок другой отключился"
+                        open={isMessageOpen}
                     />
                     : null
             }
