@@ -4,15 +4,23 @@ import PageGame from "../../../../pages/pageGame";
 import PageAbout from "../../../../pages/pageAbout";
 import PageInfo from "../../../../pages/pageInfo";
 
+import { createBrowserRouter, createRoutesFromElements, RouterProvider } from 'react-router-dom'
 
-const Router = () => {
-    return (
-        <Routes>
+const router = createBrowserRouter(
+    createRoutesFromElements(
+        <>
             <Route path="/" element={<PageHome />} />
             <Route path="/game/:playerId" element={<PageGame />} />
             <Route path="/about" element={<PageAbout />} />
             <Route path="/info" element={<PageInfo />} />
-        </Routes>
+        </>
+    )
+);
+
+
+const Router = () => {
+    return (
+        <RouterProvider router={router} />
     );
 }
 
