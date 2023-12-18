@@ -1,6 +1,7 @@
 import { useState } from "react";
 
 const useMessage = () => {
+    const [isWaiting, setIsWaiting] = useState(false);
     const [isMessageOpen, setIsMessageOpen] = useState<boolean>(false);
     const [message, setMessage] = useState<string>("");
     const [description, setDescription] = useState<string>("");
@@ -9,12 +10,14 @@ const useMessage = () => {
     const showMessage = (
         icon: "win" | "draw",
         messageText: string,
-        descriptionText: string
+        descriptionText: string,
+        wait: boolean,
     ) => {
         setMessageIcon(icon);
         setMessage(messageText);
         setDescription(descriptionText);
         setIsMessageOpen(true);
+        setIsWaiting(wait);
     };
 
     const hideMessage = () => {
@@ -26,6 +29,7 @@ const useMessage = () => {
         message,
         description,
         messageIcon,
+        isWaiting,
         showMessage,
         hideMessage,
     };
