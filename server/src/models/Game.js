@@ -29,7 +29,7 @@ class Game {
             this.onPlayerDisconnects();
         });
 
-        // socket.on("playerGivesUp", onPlayerGivesUp(io, socket, player));
+        this.socket.on("playerGivesUp", (player) => this.onPlayerGivesUp(player));
 
         // socket.on("playerDraw", onPlayerDraw(io, socket, player));
     }
@@ -94,6 +94,11 @@ class Game {
     onPlayerLeftGamePage() {
         this.socket.disconnect();
         console.log("Player left game page...");
+    }
+
+    onPlayerGivesUp(player) {
+        console.log(`Player ${player.name} wants to give up!`);
+        this.socket.to(this.currentRoom).emit("playerGaveUp", player);
     }
 
     isCreator(player) {

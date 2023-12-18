@@ -2,8 +2,8 @@ import { useEffect, useState } from "react";
 import { Player } from "../../models/Player";
 import { Colors } from "../../models/Colors";
 import { getUser } from "../../common/service/userS";
-import { useBlocker, useLocation, useParams } from "react-router-dom";
-import { playerLeftGamePage, socket } from "../../common/service/gameS";
+import { useBlocker, useParams } from "react-router-dom";
+import { playerGivesUp, playerLeftGamePage, socket } from "../../common/service/gameS";
 
 // components
 import IconChessBoard from "../../assets/svg/icon-chess-board.svg?react";
@@ -19,6 +19,7 @@ import { Board } from "../../models/Board";
 
 // styles
 import styles from "./index.module.css";
+import useMessage from "../../common/hooks/useMessage";
 
 const PageGame = () => {
     const { playerId } = useParams();
@@ -31,8 +32,18 @@ const PageGame = () => {
 
     const [yourColor, setYourColor] = useState<Colors>();
 
-    const [isMessageOpen, setIsMessageOpen] = useState<boolean>(false);
+    const [isConfirmOpen, setIsConfirmOpen] = useState<boolean>(false);
 
+    const {
+        isMessageOpen,
+        message,
+        description,
+        messageIcon,
+        showMessage,
+        hideMessage
+    } = useMessage();
+
+    // block player from navigating thrugh pages after the game started
     const blocker = useBlocker(({ currentLocation, nextLocation }) => {
         return currentLocation.pathname !== nextLocation.pathname && isMessageOpen === false;
     });
@@ -48,12 +59,23 @@ const PageGame = () => {
         socket.on('playerDisconnected', () => {
             console.log("Другой игрок покинул игру");
             // open window that tells other player about winner
-            setIsMessageOpen(true);
+            showMessage("win", `Игрок ${getYourPlayer().yourPlayer?.name} победил`, "Противник отключился");
+        });
+
+        socket.on("playerGaveUp", (player) => {
+            console.log(`Игрок ${player.name} сдался!`);
+
+            if (isYourPlayer(player)) {
+                showMessage("win", `Игрок ${getYourPlayer().yourPlayer?.name} победил`, `Противник сдался`);
+            } else {
+                showMessage("win", `Игрок ${player.name} победил`, `Противник сдался`);
+            }
         });
 
         return () => {
             socket.off('playerDisconnected');
-            setIsMessageOpen(false);
+            socket.off('playerGaveUp');
+            hideMessage();
         };
     }, []);
 
@@ -111,6 +133,24 @@ const PageGame = () => {
         setCurrentPlayer(currentPlayer?.color === Colors.WHITE ? blackPlayer : whitePlayer);
     }
 
+    function getYourPlayer() {
+        if (yourColor === whitePlayer?.color) {
+            return {
+                yourPlayer: whitePlayer,
+                opponentPlayer: blackPlayer
+            };
+        } else {
+            return {
+                yourPlayer: blackPlayer,
+                opponentPlayer: whitePlayer
+            };
+        }
+    }
+
+    function isYourPlayer(player: Player): boolean {
+        return getYourPlayer().yourPlayer?.color === player?.color;
+    }
+
     return (
         <>
             {
@@ -124,15 +164,26 @@ const PageGame = () => {
                         handleCancel={() => blocker.reset && blocker.reset()}
                         open={true}
                     />
-                    : null
+                    : isConfirmOpen === true && isMessageOpen === false
+                        ? <Confirm
+                            message="Вы точно хотите сдаться?"
+                            handleConfirm={() => {
+                                playerGivesUp(getYourPlayer().yourPlayer);
+                                setIsConfirmOpen(false);
+                                showMessage("win", `Игрок ${getYourPlayer().yourPlayer?.name} победил`, "Вы сдались");
+                            }}
+                            handleCancel={() => setIsConfirmOpen(false)}
+                            open={true}
+                        />
+                        : null
             }
 
             {
                 isMessageOpen ?
                     <Message
-                        icon="win"
-                        message={`Игрок победил`}
-                        description="Игрок другой отключился"
+                        icon={messageIcon}
+                        message={message}
+                        description={description}
                         open={isMessageOpen}
                     />
                     : null
@@ -169,6 +220,7 @@ const PageGame = () => {
 
                     <HistoryPanel
                         moves={board.moves}
+                        showConfirmWindow={() => setIsConfirmOpen(true)}
                     />
                 </div>
             </div>

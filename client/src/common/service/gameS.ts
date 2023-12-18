@@ -21,6 +21,10 @@ export function playerLeftGamePage() {
     socket.emit("playerLeftGamePage");
 }
 
+export function playerGivesUp(player: Player | null) {
+    socket.emit("playerGivesUp", player);
+}
+
 export function reconnect() {
     socket.disconnect();
     socket.connect();
