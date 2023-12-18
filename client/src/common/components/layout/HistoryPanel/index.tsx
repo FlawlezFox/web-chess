@@ -1,5 +1,4 @@
 import IHistory from "../../../interfaces/IHistory";
-import { useState } from "react";
 
 // components
 import IconGiveup from "../../../../assets/svg/icon-giveup.svg?react";
@@ -8,7 +7,7 @@ import IconHandshake from "../../../../assets/svg/icon-handshake.svg?react";
 // styles
 import styles from "./index.module.css";
 
-const HistoryPanel = ({ moves, showConfirmWindow }: IHistory) => {
+const HistoryPanel = ({ moves, showConfirmWindow, showDrawWindow }: IHistory) => {
     return (
         <>
             <div className={styles.panelContainer}>
@@ -46,7 +45,7 @@ const HistoryPanel = ({ moves, showConfirmWindow }: IHistory) => {
                             </div>
                         </button>
 
-                        <button className={styles.buttonTie}>
+                        <button className={styles.buttonTie} onClick={showDrawWindow}>
                             <div className={styles.buttonContainer}>
                                 <IconHandshake />
 

@@ -25,6 +25,18 @@ export function playerGivesUp(player: Player | null) {
     socket.emit("playerGivesUp", player);
 }
 
+export function playerSendDrawRequest(player: Player | null) {
+    socket.emit("playerSendDrawRequest", player);
+}
+
+export function playerConfirmDraw(player: Player | null) {
+    socket.emit("playerConfirmDraw", player);
+}
+
+export function playerRejectedDraw(player: Player | null) {
+    socket.emit("playerRejectedDraw", player);
+}
+
 export function reconnect() {
     socket.disconnect();
     socket.connect();

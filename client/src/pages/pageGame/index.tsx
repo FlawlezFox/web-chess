@@ -3,7 +3,7 @@ import { Player } from "../../models/Player";
 import { Colors } from "../../models/Colors";
 import { getUser } from "../../common/service/userS";
 import { useBlocker, useParams } from "react-router-dom";
-import { playerGivesUp, playerLeftGamePage, socket } from "../../common/service/gameS";
+import { playerConfirmDraw, playerGivesUp, playerLeftGamePage, playerRejectedDraw, playerSendDrawRequest, socket } from "../../common/service/gameS";
 
 // components
 import IconChessBoard from "../../assets/svg/icon-chess-board.svg?react";
@@ -32,13 +32,14 @@ const PageGame = () => {
 
     const [yourColor, setYourColor] = useState<Colors>();
 
-    const [isConfirmOpen, setIsConfirmOpen] = useState<boolean>(false);
+    const [confirmMode, setConfirmMode] = useState<"giveup" | "draw" | "closed">("closed");
 
     const {
         isMessageOpen,
         message,
         description,
         messageIcon,
+        isWaiting,
         showMessage,
         hideMessage
     } = useMessage();
@@ -59,22 +60,45 @@ const PageGame = () => {
         socket.on('playerDisconnected', () => {
             console.log("Другой игрок покинул игру");
             // open window that tells other player about winner
-            showMessage("win", `Игрок ${getYourPlayer().yourPlayer?.name} победил`, "Противник отключился");
+            showMessage("win", `Игрок ${getYourPlayer().yourPlayer?.name} победил`, "Противник отключился", false);
         });
 
         socket.on("playerGaveUp", (player) => {
             console.log(`Игрок ${player.name} сдался!`);
 
             if (isYourPlayer(player)) {
-                showMessage("win", `Игрок ${getYourPlayer().yourPlayer?.name} победил`, `Противник сдался`);
+                showMessage("win", `Игрок ${getYourPlayer().yourPlayer?.name} победил`, `Противник сдался`, false);
             } else {
-                showMessage("win", `Игрок ${player.name} победил`, `Противник сдался`);
+                showMessage("win", `Игрок ${player.name} победил`, `Противник сдался`, false);
             }
+        });
+
+        socket.on("playerSendDrawRequest", (player) => {
+            console.log(`Игрок ${player.name} предлагает вам ничью!`);
+
+            // open confirmation dialog for the player, that received draw request
+            setConfirmMode("draw");
+        });
+
+        socket.on("playerConfirmDraw", (player) => {
+            console.log(`Игрок ${player.name} принял предложение ничьи!\nИгра окончена`);
+
+            hideMessage();
+            showMessage("draw", "Игра завершилась ничьей!", "", false);
+        });
+
+        socket.on("playerRejectedDraw", (player) => {
+            console.log(`Игрок ${player.name} отказался от предложения ничьи!\nИгра продолжается`);
+
+            hideMessage();
         });
 
         return () => {
             socket.off('playerDisconnected');
             socket.off('playerGaveUp');
+            socket.off("playerSendDrawRequest");
+            socket.off("playerConfirmDraw");
+            socket.off("playerRejectedDraw");
             hideMessage();
         };
     }, []);
@@ -129,8 +153,30 @@ const PageGame = () => {
         setBoard(newBoard);
     }
 
+    function playerDrawRequest() {
+        playerSendDrawRequest(getYourPlayer().yourPlayer);
+        showMessage("draw", "Вы предложили ничью", "Ожидаем ответ оппонента...", true);
+    }
+
     function swapPlayer() {
         setCurrentPlayer(currentPlayer?.color === Colors.WHITE ? blackPlayer : whitePlayer);
+    }
+
+    function confirmGiveUp() {
+        playerGivesUp(getYourPlayer().yourPlayer);
+        setConfirmMode("closed");
+        showMessage("win", `Игрок ${getYourPlayer().yourPlayer?.name} победил`, "Вы сдались", false);
+    }
+
+    function confirmDraw() {
+        playerConfirmDraw(getYourPlayer().yourPlayer);
+        setConfirmMode("closed");
+        showMessage("draw", `Игра завершилась ничьей!`, "", false);
+    }
+
+    function rejectDraw() {
+        setConfirmMode("closed");
+        playerRejectedDraw(getYourPlayer().yourPlayer);
     }
 
     function getYourPlayer() {
@@ -164,18 +210,21 @@ const PageGame = () => {
                         handleCancel={() => blocker.reset && blocker.reset()}
                         open={true}
                     />
-                    : isConfirmOpen === true && isMessageOpen === false
+                    : confirmMode === "giveup" && isMessageOpen === false
                         ? <Confirm
                             message="Вы точно хотите сдаться?"
-                            handleConfirm={() => {
-                                playerGivesUp(getYourPlayer().yourPlayer);
-                                setIsConfirmOpen(false);
-                                showMessage("win", `Игрок ${getYourPlayer().yourPlayer?.name} победил`, "Вы сдались");
-                            }}
-                            handleCancel={() => setIsConfirmOpen(false)}
+                            handleConfirm={() => confirmGiveUp()}
+                            handleCancel={() => setConfirmMode("closed")}
                             open={true}
                         />
-                        : null
+                        : confirmMode === "draw" && isMessageOpen === false
+                            ? <Confirm
+                                message={`Игрок ${getYourPlayer().opponentPlayer?.name} предлагает ничью`}
+                                handleConfirm={() => confirmDraw()}
+                                handleCancel={() => rejectDraw()}
+                                open={true}
+                            />
+                            : null
             }
 
             {
@@ -185,6 +234,7 @@ const PageGame = () => {
                         message={message}
                         description={description}
                         open={isMessageOpen}
+                        wait={isWaiting}
                     />
                     : null
             }
@@ -220,7 +270,8 @@ const PageGame = () => {
 
                     <HistoryPanel
                         moves={board.moves}
-                        showConfirmWindow={() => setIsConfirmOpen(true)}
+                        showConfirmWindow={() => setConfirmMode("giveup")}
+                        showDrawWindow={() => playerDrawRequest()}
                     />
                 </div>
             </div>

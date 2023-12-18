@@ -14,22 +14,30 @@ interface MessageProps {
     message: string;
     description?: string;
     open?: boolean;
+    wait?: boolean;
 }
 
-const Message = ({ icon, message, description, open }: MessageProps) => {
-    const time = new Date();
+const Message = ({ icon, message, description, open, wait }: MessageProps) => {
+    const time = new Date(Date.now() + 5000);
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const timer = useTimer({ expiryTimestamp: time, onExpire });
     const navigate = useNavigate();
 
     useEffect(() => {
-        time.setSeconds(time.getSeconds() + 5);
         timer.restart(time, true);
     }, []);
 
+    useEffect(() => {
+        if (wait) {
+            timer.pause();
+        } else if (!timer.isRunning) {
+            timer.resume();
+        }
+    }, [wait, timer]);
+
     function onExpire() {
-        navigate("/");
+        wait ? "" : navigate("/");
     }
 
     return (
@@ -41,7 +49,7 @@ const Message = ({ icon, message, description, open }: MessageProps) => {
 
                 {description && <div className={styles.description}>{description}</div>}
 
-                <div className={styles.redirectMessage}>Вы будете перенаправлены на главный экран через {timer.seconds} секунд</div>
+                {wait || <div className={styles.redirectMessage}>Вы будете перенаправлены на главный экран через {timer.totalSeconds} секунд</div>}
             </dialog>
             <div className={styles.backdrop}></div>
         </>

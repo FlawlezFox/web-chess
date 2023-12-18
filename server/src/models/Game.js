@@ -31,6 +31,12 @@ class Game {
 
         this.socket.on("playerGivesUp", (player) => this.onPlayerGivesUp(player));
 
+        this.socket.on("playerSendDrawRequest", (player) => this.onPlayerSendDrawRequest(player));
+
+        this.socket.on("playerConfirmDraw", (player) => this.onPlayerConfirmDraw(player));
+
+        this.socket.on("playerRejectedDraw", (player) => this.onPlayerRejectedDraw(player));
+
         // socket.on("playerDraw", onPlayerDraw(io, socket, player));
     }
 
@@ -97,10 +103,26 @@ class Game {
     }
 
     onPlayerGivesUp(player) {
-        console.log(`Player ${player.name} wants to give up!`);
+        console.log(`\nPlayer ${player.name} wants to give up!\n`);
         this.socket.to(this.currentRoom).emit("playerGaveUp", player);
     }
 
+    onPlayerSendDrawRequest(player) {
+        console.log(`\nPlayer ${player.name} wants to draw this game!\n`);
+        this.socket.to(this.currentRoom).emit("playerSendDrawRequest", player);
+    }
+
+    onPlayerConfirmDraw(player) {
+        console.log(`Player ${player.name} confirmed draw request!`);
+        this.socket.to(this.currentRoom).emit("playerConfirmDraw", player);
+    }
+
+    onPlayerRejectedDraw(player) {
+        console.log(`Player ${player.name} rejected draw request!`);
+        this.socket.to(this.currentRoom).emit("playerRejectedDraw", player);
+    }
+
+    // helping functions
     isCreator(player) {
         return player && player.color === "white";
     }
