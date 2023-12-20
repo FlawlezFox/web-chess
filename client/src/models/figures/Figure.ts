@@ -2,6 +2,7 @@ import { Colors } from "../Colors";
 import icon from "../../assets/svg/icon-pawn.svg"
 import { Cell } from "../Cell";
 import { nanoid } from "nanoid";
+import { Board } from "../Board";
 
 export enum FigureNames {
     FIGURE = "Фигура",
@@ -16,14 +17,11 @@ export enum FigureNames {
 export class Figure {
     color: Colors;
     icon: typeof icon | null;
-    cell: Cell;
     name: FigureNames;
     id: string;
 
-    constructor(color: Colors, cell: Cell) {
+    constructor(color: Colors) {
         this.color = color;
-        this.cell = cell;
-        this.cell.figure = this;
         this.icon = null;
         this.name = FigureNames.FIGURE;
         this.id = nanoid();
@@ -41,7 +39,7 @@ export class Figure {
         return true;
     }
 
-    moveFigure(target: Cell) {
+    moveFigure(target: Cell, board: Board) {
 
     }
 }

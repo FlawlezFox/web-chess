@@ -12,14 +12,12 @@ const BoardComponent = ({ board, setBoard, currentPlayer, swapPlayer }: IBoard) 
     const [selectedCell, setSelectedCell] = useState<Cell | null>(null);
 
     function select(cell: Cell) {
-        if (selectedCell && selectedCell !== cell && selectedCell.figure?.canMove(cell)) {
-            selectedCell.moveFigure(cell);
+        if (selectedCell && selectedCell !== cell && selectedCell.canMove(cell, board)) {
+            selectedCell.moveFigure(cell, board);
             swapPlayer();
             setSelectedCell(null);
-        } else {
-            if (cell.figure?.color === currentPlayer?.color) {
-                setSelectedCell(cell);
-            }
+        } else if (cell.figure?.color === currentPlayer?.color) {
+            setSelectedCell(cell);
         }
     }
 
