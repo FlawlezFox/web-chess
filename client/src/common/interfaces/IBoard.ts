@@ -6,6 +6,7 @@ interface IBoard {
     setBoard: (board: Board) => void;
     currentPlayer: Player | null;
     swapPlayer: () => void;
+    yourPlayer: Player | null;
 }
 
 export default IBoard;

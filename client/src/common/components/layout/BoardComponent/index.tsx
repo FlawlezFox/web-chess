@@ -1,23 +1,29 @@
 import { Fragment, useEffect, useState } from "react";
 import IBoard from "../../../interfaces/IBoard";
+import { Board } from "../../../../models/Board";
 import { Cell } from "../../../../models/Cell";
+import { playerMoved, socket } from "../../../service/gameS";
 
 // components
 import CellComponent from "../CellComponent";
 
 // styles
 import styles from "./index.module.css";
+import IMove from "../../../interfaces/IMove";
 
-const BoardComponent = ({ board, setBoard, currentPlayer, swapPlayer }: IBoard) => {
+const BoardComponent = ({ board, setBoard, currentPlayer, swapPlayer, yourPlayer }: IBoard) => {
     const [selectedCell, setSelectedCell] = useState<Cell | null>(null);
 
     function select(cell: Cell) {
-        if (selectedCell && selectedCell !== cell && selectedCell.canMove(cell, board)) {
-            selectedCell.moveFigure(cell, board);
-            swapPlayer();
-            setSelectedCell(null);
-        } else if (cell.figure?.color === currentPlayer?.color) {
-            setSelectedCell(cell);
+        if (currentPlayer?.color === yourPlayer?.color) {
+            if (selectedCell && selectedCell !== cell && selectedCell.canMove(cell, board)) {
+                selectedCell.moveFigure(cell, board);
+                swapPlayer();
+                setSelectedCell(null);
+                playerMoved(board);
+            } else if (cell.figure?.color === currentPlayer?.color) {
+                setSelectedCell(cell);
+            }
         }
     }
 
@@ -26,9 +32,27 @@ const BoardComponent = ({ board, setBoard, currentPlayer, swapPlayer }: IBoard) 
         highlightCells();
     }, [selectedCell]);
 
+    useEffect(() => {
+        socket.on("playerMoved", (updatedBoard) => {
+            type boardPropsT = {
+                cells: Cell[][],
+                moves: IMove[],
+            }
+
+            console.log(currentPlayer);
+
+            const boardProps: boardPropsT  = JSON.parse(updatedBoard);
+            const newBoard = new Board(boardProps.cells, boardProps.moves);
+            setBoard(newBoard);
+            swapPlayer();
+        });
+    }, [currentPlayer]);
+
     function highlightCells() {
-        board.highlightCells(selectedCell);
-        updateBoard()
+        if (board.highlightCells && typeof board.highlightCells === 'function') {
+            board.highlightCells(selectedCell);
+            updateBoard();
+        }
     }
 
     function updateBoard() {

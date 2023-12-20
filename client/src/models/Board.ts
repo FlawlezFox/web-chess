@@ -2,6 +2,7 @@ import IMove from "../common/interfaces/IMove";
 import { Cell } from "./Cell";
 import { Colors } from "./Colors";
 import { Bishop } from "./figures/Bishop";
+import { Figure, FigureNames } from "./figures/Figure";
 import { King } from "./figures/King";
 import { Knight } from "./figures/Knight";
 import { Pawn } from "./figures/Pawn";
@@ -14,14 +15,34 @@ export class Board {
 
     moves: IMove[] = [];
 
-    public initCells() {
+    constructor(cells?: Cell[][], moves?: IMove[]) {
+        if (cells && moves) {
+            this.initCells(cells);
+            
+            this.moves = moves;
+        }
+    }
+
+    public initCells(cells?: Cell[][]) {
         for (let i = 0; i < 8; i++) {
             const row: Cell[] = [];
             for (const j of this.rowCoordinate) {
                 if ((i + this.rowCoordinate.indexOf(j)) % 2 !== 0) {
-                    row.push(new Cell(j, i, Colors.BLACK, null));
+                    if (cells && cells[i][this.rowCoordinate.indexOf(j)].figure) {
+                        const figure = Board.createFigure(cells[i][this.rowCoordinate.indexOf(j)].figure);
+
+                        row.push(new Cell(j, i, Colors.BLACK, figure));
+                    } else {
+                        row.push(new Cell(j, i, Colors.BLACK, null));
+                    }
                 } else {
-                    row.push(new Cell(j, i, Colors.WHITE, null));
+                    if (cells && cells[i][this.rowCoordinate.indexOf(j)].figure) {
+                        const figure = Board.createFigure(cells[i][this.rowCoordinate.indexOf(j)].figure);
+
+                        row.push(new Cell(j, i, Colors.WHITE, figure));
+                    } else {
+                        row.push(new Cell(j, i, Colors.WHITE, null));
+                    }
                 }
             }
 
@@ -96,5 +117,33 @@ export class Board {
         newBoard.cells = this.cells;
         newBoard.moves = this.moves;
         return newBoard;
+    }
+
+    static createFigure(figure: Figure | null): Figure | null {
+        if (!figure)
+            return null;
+        
+        switch(figure.name) {
+            case FigureNames.KING:
+                return new King(figure.color);
+
+            case FigureNames.KNIGHT:
+                return new Knight(figure.color);
+
+            case FigureNames.PAWN:
+                return new Pawn(figure.color);
+
+            case FigureNames.QUEEN:
+                return new Queen(figure.color);
+
+            case FigureNames.ROOK:
+                return new Rook(figure.color);
+
+            case FigureNames.BISHOP:
+                return new Bishop(figure.color);
+
+            default:
+                return null;
+        }
     }
 }

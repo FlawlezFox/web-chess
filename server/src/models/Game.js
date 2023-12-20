@@ -37,6 +37,8 @@ class Game {
 
         this.socket.on("playerRejectedDraw", (player) => this.onPlayerRejectedDraw(player));
 
+        this.socket.on("playerMoved", (board) => this.onPlayerMoved(board));
+
         // socket.on("playerDraw", onPlayerDraw(io, socket, player));
     }
 
@@ -120,6 +122,11 @@ class Game {
     onPlayerRejectedDraw(player) {
         console.log(`Player ${player.name} rejected draw request!`);
         this.socket.to(this.currentRoom).emit("playerRejectedDraw", player);
+    }
+
+    onPlayerMoved(board) {
+        console.log("player moved");
+        this.socket.to(this.currentRoom).emit("playerMoved", board);
     }
 
     // helping functions

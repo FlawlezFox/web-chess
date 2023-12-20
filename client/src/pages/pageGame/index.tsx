@@ -265,6 +265,7 @@ const PageGame = () => {
                         board={board}
                         setBoard={setBoard}
                         currentPlayer={currentPlayer}
+                        yourPlayer={getYourPlayer().yourPlayer}
                         swapPlayer={swapPlayer}
                     />
 

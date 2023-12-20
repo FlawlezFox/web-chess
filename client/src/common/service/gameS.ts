@@ -1,5 +1,6 @@
 import io from "socket.io-client";
 import { Player } from "../../models/Player";
+import { Board } from "../../models/Board";
 
 const SERVER = import.meta.env.VITE_BACKEND_SERVER;
 
@@ -35,6 +36,14 @@ export function playerConfirmDraw(player: Player | null) {
 
 export function playerRejectedDraw(player: Player | null) {
     socket.emit("playerRejectedDraw", player);
+}
+
+export function playerMoved(board: Board) {
+    const boardProps = {
+        cells: board.cells,
+        moves: board.moves,
+    };
+    socket.emit("playerMoved", JSON.stringify(boardProps));
 }
 
 export function reconnect() {
