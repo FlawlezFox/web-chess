@@ -39,6 +39,8 @@ class Game {
 
         this.socket.on("playerMoved", (board) => this.onPlayerMoved(board));
 
+        this.socket.on("playerTimerExpired", (player) => this.onPlayerTimerExpired(player));
+
         // socket.on("playerDraw", onPlayerDraw(io, socket, player));
     }
 
@@ -127,6 +129,11 @@ class Game {
     onPlayerMoved(board) {
         console.log("player moved");
         this.socket.to(this.currentRoom).emit("playerMoved", board);
+    }
+
+    onPlayerTimerExpired(player) {
+        console.log(`Player's ${player.name} timer expired, he lost!`);
+        this.socket.to(this.currentRoom).emit("playerTimerExpired", player);
     }
 
     // helping functions

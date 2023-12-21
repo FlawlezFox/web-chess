@@ -5,8 +5,9 @@ import cn from "classnames";
 
 // styles
 import styles from "./index.module.css";
+import { playerTimerExpired } from "../../../service/gameS";
 
-const Timer = ({ currentPlayer }: ITimer) => {
+const Timer = ({ currentPlayer, opponentPlayer, showMessage }: ITimer) => {
     const time = new Date();
     const timer = useTimer({ expiryTimestamp: time, onExpire });
 
@@ -18,8 +19,11 @@ const Timer = ({ currentPlayer }: ITimer) => {
     }, [currentPlayer]);
 
     function onExpire() {
-        // TODO: make losing logic when timer is expired
-        alert("You lose");
+        // emit event that indicates that he lost
+        if (currentPlayer?.color !== opponentPlayer?.color) { 
+            playerTimerExpired(currentPlayer);
+            showMessage("win", `Игрок ${opponentPlayer?.name} победил`, "Вы проиграли", false);
+        }
     }
 
     return (

@@ -30,7 +30,7 @@ const PageGame = () => {
     const [blackPlayer, setBlackPlayer] = useState<Player | null>(null);
     const [currentPlayer, setCurrentPlayer] = useState<Player | null>(null);
 
-    const [yourColor, setYourColor] = useState<Colors>();
+    const [yourPlayer, setYourPlayer] = useState<Player | null>(null);
 
     const [confirmMode, setConfirmMode] = useState<"giveup" | "draw" | "closed">("closed");
 
@@ -60,14 +60,14 @@ const PageGame = () => {
         socket.on('playerDisconnected', () => {
             console.log("Другой игрок покинул игру");
             // open window that tells other player about winner
-            showMessage("win", `Игрок ${getYourPlayer().yourPlayer?.name} победил`, "Противник отключился", false);
+            showMessage("win", `Игрок ${yourPlayer?.name} победил`, "Противник отключился", false);
         });
 
         socket.on("playerGaveUp", (player) => {
             console.log(`Игрок ${player.name} сдался!`);
 
             if (isYourPlayer(player)) {
-                showMessage("win", `Игрок ${getYourPlayer().yourPlayer?.name} победил`, `Противник сдался`, false);
+                showMessage("win", `Игрок ${yourPlayer?.name} победил`, `Противник сдался`, false);
             } else {
                 showMessage("win", `Игрок ${player.name} победил`, `Противник сдался`, false);
             }
@@ -93,15 +93,22 @@ const PageGame = () => {
             hideMessage();
         });
 
+        socket.on("playerTimerExpired", (player) => {
+            console.log(`Игрок ${player.name} проиграл, так как у него кончился таймер!`);
+
+            showMessage("win", `Игрок ${yourPlayer?.name} победил`, "У противника кончился таймер", false);
+        });
+
         return () => {
             socket.off('playerDisconnected');
             socket.off('playerGaveUp');
             socket.off("playerSendDrawRequest");
             socket.off("playerConfirmDraw");
             socket.off("playerRejectedDraw");
+            socket.off("playerTimerExpired");
             hideMessage();
         };
-    }, []);
+    }, [yourPlayer]);
 
     useEffect(() => {
         const handleUnload = (event: BeforeUnloadEvent) => {
@@ -130,7 +137,7 @@ const PageGame = () => {
             const opponentPlayer: Player = await getUser(opponentId);
 
             console.log("Your player: " + yourPlayer.name);
-            setYourColor(yourPlayer.color);
+            setYourPlayer(yourPlayer);
 
             if (yourPlayer.color === Colors.WHITE) {
                 setWhitePlayer(yourPlayer);
@@ -154,7 +161,7 @@ const PageGame = () => {
     }
 
     function playerDrawRequest() {
-        playerSendDrawRequest(getYourPlayer().yourPlayer);
+        playerSendDrawRequest(yourPlayer);
         showMessage("draw", "Вы предложили ничью", "Ожидаем ответ оппонента...", true);
     }
 
@@ -163,38 +170,32 @@ const PageGame = () => {
     }
 
     function confirmGiveUp() {
-        playerGivesUp(getYourPlayer().yourPlayer);
+        playerGivesUp(yourPlayer);
         setConfirmMode("closed");
-        showMessage("win", `Игрок ${getYourPlayer().yourPlayer?.name} победил`, "Вы сдались", false);
+        showMessage("win", `Игрок ${yourPlayer?.name} победил`, "Вы сдались", false);
     }
 
     function confirmDraw() {
-        playerConfirmDraw(getYourPlayer().yourPlayer);
+        playerConfirmDraw(yourPlayer);
         setConfirmMode("closed");
         showMessage("draw", `Игра завершилась ничьей!`, "", false);
     }
 
     function rejectDraw() {
         setConfirmMode("closed");
-        playerRejectedDraw(getYourPlayer().yourPlayer);
+        playerRejectedDraw(yourPlayer);
     }
 
-    function getYourPlayer() {
-        if (yourColor === whitePlayer?.color) {
-            return {
-                yourPlayer: whitePlayer,
-                opponentPlayer: blackPlayer
-            };
+    function getOpponentPlayer() {
+        if (yourPlayer?.color === whitePlayer?.color) {
+            return blackPlayer;
         } else {
-            return {
-                yourPlayer: blackPlayer,
-                opponentPlayer: whitePlayer
-            };
+            return whitePlayer;
         }
     }
 
     function isYourPlayer(player: Player): boolean {
-        return getYourPlayer().yourPlayer?.color === player?.color;
+        return yourPlayer?.color === player?.color;
     }
 
     return (
@@ -219,7 +220,7 @@ const PageGame = () => {
                         />
                         : confirmMode === "draw" && isMessageOpen === false
                             ? <Confirm
-                                message={`Игрок ${getYourPlayer().opponentPlayer?.name} предлагает ничью`}
+                                message={`Игрок ${getOpponentPlayer()?.name} предлагает ничью`}
                                 handleConfirm={() => confirmDraw()}
                                 handleCancel={() => rejectDraw()}
                                 open={true}
@@ -250,13 +251,15 @@ const PageGame = () => {
                         <IconProfile className={styles.iconProfile} />
                         {
                             currentPlayer?.color === Colors.WHITE
-                                ? <span className={styles.userName}>{whitePlayer?.name || "Игрок не подключен"} ({whitePlayer?.color === yourColor && "ВЫ"} белые)</span>
-                                : <span className={styles.userName}>{blackPlayer?.name || "Игрок не подключен"} ({blackPlayer?.color === yourColor && "ВЫ"} черные)</span>
+                                ? <span className={styles.userName}>{whitePlayer?.name || "Игрок не подключен"} ({whitePlayer?.color === yourPlayer?.color && "ВЫ"} белые)</span>
+                                : <span className={styles.userName}>{blackPlayer?.name || "Игрок не подключен"} ({blackPlayer?.color === yourPlayer?.color && "ВЫ"} черные)</span>
                         }
                     </div>
 
                     <Timer
                         currentPlayer={currentPlayer}
+                        showMessage={showMessage}
+                        opponentPlayer={getOpponentPlayer()}
                     />
                 </div>
 
@@ -265,7 +268,7 @@ const PageGame = () => {
                         board={board}
                         setBoard={setBoard}
                         currentPlayer={currentPlayer}
-                        yourPlayer={getYourPlayer().yourPlayer}
+                        yourPlayer={yourPlayer}
                         swapPlayer={swapPlayer}
                     />
 

@@ -38,6 +38,10 @@ export function playerRejectedDraw(player: Player | null) {
     socket.emit("playerRejectedDraw", player);
 }
 
+export function playerTimerExpired(player: Player | null) {
+    socket.emit("playerTimerExpired", player);
+}
+
 export function playerMoved(board: Board) {
     const boardProps = {
         cells: board.cells,
