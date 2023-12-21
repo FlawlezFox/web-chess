@@ -3,13 +3,13 @@ import IBoard from "../../../interfaces/IBoard";
 import { Board } from "../../../../models/Board";
 import { Cell } from "../../../../models/Cell";
 import { playerMoved, socket } from "../../../service/gameS";
+import IMove from "../../../interfaces/IMove";
 
 // components
 import CellComponent from "../CellComponent";
 
 // styles
 import styles from "./index.module.css";
-import IMove from "../../../interfaces/IMove";
 
 const BoardComponent = ({ board, setBoard, currentPlayer, swapPlayer, yourPlayer }: IBoard) => {
     const [selectedCell, setSelectedCell] = useState<Cell | null>(null);
