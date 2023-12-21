@@ -31,7 +31,7 @@
     background-color: rgba(0, 0, 0, .6);
 
     top: 0;
-    position: absolute;
+    position: fixed;
     z-index: var(--ui-index-1);
 }
 

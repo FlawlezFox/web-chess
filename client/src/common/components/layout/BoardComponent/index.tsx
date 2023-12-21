@@ -39,8 +39,6 @@ const BoardComponent = ({ board, setBoard, currentPlayer, swapPlayer, yourPlayer
                 moves: IMove[],
             }
 
-            console.log(currentPlayer);
-
             const boardProps: boardPropsT  = JSON.parse(updatedBoard);
             const newBoard = new Board(boardProps.cells, boardProps.moves);
             setBoard(newBoard);
