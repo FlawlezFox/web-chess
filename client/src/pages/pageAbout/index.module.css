@@ -1,0 +1,71 @@
+.pageWrapper {
+    margin: 0 auto;
+    width: 1248px;
+    height: 100svh;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.pageWrapper a {
+    text-decoration: none;
+    color: var(--black);
+}
+
+.gameTitle,
+.title {
+    margin-top: 24px;
+}
+
+.gameTitle {
+    display: flex;
+    gap: 8px;
+    align-self: center;
+}
+
+.header {
+    font-size: 1.5em;
+}
+
+.iconChessBoard {
+    width: 48px;
+    height: 48px;
+}
+
+.title {
+    font-size: 3em;
+    font-weight: bold;
+
+    align-self: center;
+}
+
+.universityInfo,
+.developers {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.universityInfo {
+    margin-top: 48px;
+}
+
+.universityInfo ~ .paragraph {
+    margin-top: 48px;
+}
+
+.developers > .paragraph {
+    margin-top: 12px;
+}
+
+.paragraph,
+.footer {
+    font-size: 2em;
+    text-align: center;
+}
+
+.footer {
+    margin-top: auto;
+    margin-bottom: 24px;
+}

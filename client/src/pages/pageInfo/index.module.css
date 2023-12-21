@@ -1,0 +1,61 @@
+.pageWrapper {
+    margin: 0 auto;
+    width: 1248px;
+
+    display: flex;
+    flex-direction: column;
+}
+
+.pageWrapper a {
+    text-decoration: none;
+    color: var(--black);
+}
+
+.gameTitle,
+.title,
+.section {
+    margin-top: 24px;
+}
+
+.gameTitle {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    align-self: center;
+}
+
+.header {
+    font-size: 1.5em;
+}
+
+.iconChessBoard {
+    width: 48px;
+    height: 48px;
+}
+
+.title,
+.sectionHeader {
+    font-weight: bold;
+}
+
+.title {
+    font-size: 3em;
+
+    align-self: center;
+}
+
+.sectionHeader {
+    margin-top: 48px;
+
+    font-size: 2em;
+}
+
+.section {    
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.paragraph {
+    font-size: 1.5em;
+}

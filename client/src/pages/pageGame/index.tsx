@@ -1,6 +1,4 @@
 import { useEffect, useState } from "react";
-import { Player } from "../../models/Player";
-import { Colors } from "../../models/Colors";
 import { getUser } from "../../common/service/userS";
 import { useBlocker, useParams } from "react-router-dom";
 import { playerConfirmDraw, playerGivesUp, playerLeftGamePage, playerRejectedDraw, playerSendDrawRequest, socket } from "../../common/service/gameS";
@@ -16,6 +14,8 @@ import Message from "../../common/components/layout/Message";
 
 // models
 import { Board } from "../../models/Board";
+import { Player } from "../../models/Player";
+import { Colors } from "../../models/Colors";
 
 // styles
 import styles from "./index.module.css";
@@ -251,8 +251,8 @@ const PageGame = () => {
                         <IconProfile className={styles.iconProfile} />
                         {
                             currentPlayer?.color === Colors.WHITE
-                                ? <span className={styles.userName}>{whitePlayer?.name || "Игрок не подключен"} ({whitePlayer?.color === yourPlayer?.color && "ВЫ"} белые)</span>
-                                : <span className={styles.userName}>{blackPlayer?.name || "Игрок не подключен"} ({blackPlayer?.color === yourPlayer?.color && "ВЫ"} черные)</span>
+                                ? <span className={styles.userName}>{whitePlayer?.name || "Игрок не подключен"} ({whitePlayer?.color === yourPlayer?.color && "ВЫ "}белые)</span>
+                                : <span className={styles.userName}>{blackPlayer?.name || "Игрок не подключен"} ({blackPlayer?.color === yourPlayer?.color && "ВЫ "}черные)</span>
                         }
                     </div>
 
