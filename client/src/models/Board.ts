@@ -131,7 +131,10 @@ export class Board {
                 return new Knight(figure.color);
 
             case FigureNames.PAWN:
-                return new Pawn(figure.color);
+                if ((figure as Pawn).isFirstMove === false)
+                    return new Pawn(figure.color, (figure as Pawn).isFirstMove);
+                else
+                    return new Pawn(figure.color);
 
             case FigureNames.QUEEN:
                 return new Queen(figure.color);
