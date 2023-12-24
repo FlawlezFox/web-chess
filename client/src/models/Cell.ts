@@ -47,7 +47,7 @@ export class Cell {
         }
     }
 
-    setFigure(figure: Figure) {
+    setFigure(figure: Figure | null) {
         this.figure = figure;
     }
 

@@ -53,7 +53,9 @@ const PageGame = () => {
     useEffect(() => {
         restart();
 
-        getPlayers();
+        getPlayers().catch(() => {
+            showMessage("draw", "Нет подключения к базе данных", "Попробуйте зайти позже", false);
+        });
     }, []);
 
     useEffect(() => {
@@ -66,11 +68,7 @@ const PageGame = () => {
         socket.on("playerGaveUp", (player) => {
             console.log(`Игрок ${player.name} сдался!`);
 
-            if (isYourPlayer(player)) {
-                showMessage("win", `Игрок ${yourPlayer?.name} победил`, `Противник сдался`, false);
-            } else {
-                showMessage("win", `Игрок ${player.name} победил`, `Противник сдался`, false);
-            }
+            showMessage("win", `Игрок ${yourPlayer?.name} победил`, `Противник сдался`, false);
         });
 
         socket.on("playerSendDrawRequest", (player) => {
@@ -172,7 +170,7 @@ const PageGame = () => {
     function confirmGiveUp() {
         playerGivesUp(yourPlayer);
         setConfirmMode("closed");
-        showMessage("win", `Игрок ${yourPlayer?.name} победил`, "Вы сдались", false);
+        showMessage("win", `Игрок ${getOpponentPlayer()?.name} победил`, "Вы сдались", false);
     }
 
     function confirmDraw() {

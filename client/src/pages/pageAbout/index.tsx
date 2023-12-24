@@ -19,16 +19,18 @@ const PageAbout = () => {
                 <div className={styles.paragraph}>Кафедра программных систем</div>
             </div>
 
-            <div className={styles.paragraph}>Курсовой проект по дисциплине Программная инженерия</div>
+            <div className={styles.paragraph}>Курсовой проект по дисциплине «Программная инженерия»</div>
 
             <div className={styles.paragraph}>Тема проекта: «Приложение «Игра «Шахматы»</div>
 
-            <div className={styles.paragraph}>Разработчики (студенты группы 6415-020302D):</div>
+            <div className={styles.paragraph}>Разработчики (обучающиеся группы 6415-020302D):</div>
 
             <div className={styles.developers}>
                 <div className={styles.paragraph}>Аракелян А.А.</div>
                 <div className={styles.paragraph}>Донсков Д.В.</div>
             </div>
+
+            <div className={styles.paragraph}>Руководитель: Зеленко Л.С.</div>
 
             <div className={styles.footer}>Самара 2023</div>
         </div>

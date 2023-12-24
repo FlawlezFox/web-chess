@@ -1,7 +1,8 @@
-import { FormEvent, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import { Player } from "../../models/Player";
 import { Colors } from "../../models/Colors";
 import { authorise } from "../../common/service/userS";
+import { nanoid } from "nanoid";
 
 // components
 import IconChessBoard from "../../assets/svg/icon-chess-board.svg?react";
@@ -12,7 +13,7 @@ import Modal from "../../common/components/layout/Modal/index";
 
 // styles
 import styles from "./index.module.css";
-import { nanoid } from "nanoid";
+import { socket } from "../../common/service/gameS";
 
 const PageHome = () => {
     const [mode, setMode] = useState<"Invite" | "Join">("Invite");
@@ -20,6 +21,15 @@ const PageHome = () => {
 
     const [userName, setUserName] = useState<string>("");
     const [player, setPlayer] = useState<Player>();
+
+    const [isServerWorking, setIsServerWorking] = useState<boolean>(true);
+
+    useEffect(() => {
+        socket.on("connect_error", (error) => {
+            setErrorMessage("Сервер не отвечает на запросы, попробуйте перезагрузить страницу");
+            setIsServerWorking(false);
+        })
+    }, []);
 
     function handleSetUserName(event: React.ChangeEvent<HTMLInputElement>) {
         setUserName(event.target.value.trim());
@@ -42,6 +52,11 @@ const PageHome = () => {
             setErrorMessage('Логин должен состоять из латинских букв, цифр, "-", "_", длиной от 4 до 16 символов')
             return;
         }
+
+        if (!isServerWorking) {
+            return;
+        }
+        
         setErrorMessage("");
 
         setMode(mode);
@@ -60,6 +75,10 @@ const PageHome = () => {
             return;
         }
 
+        if (!isServerWorking) {
+            return;
+        }
+
         let currentPlayer: Player;
 
         // if player invites other player his color will be white and he will receive game id, otherwise black
@@ -71,7 +90,10 @@ const PageHome = () => {
 
         setPlayer(currentPlayer);
 
-        authorise(currentPlayer);
+        authorise(currentPlayer).catch((reason) => {
+            console.log(reason);
+            setErrorMessage(reason);
+        });
     }
 
     return (
