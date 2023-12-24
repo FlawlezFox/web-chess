@@ -2,6 +2,8 @@
     margin: 0 auto;
     width: 1248px;
 
+    margin-bottom: 48px;
+
     display: flex;
     flex-direction: column;
 }
@@ -11,10 +13,19 @@
     color: var(--black);
 }
 
+.content {
+    display: grid;
+    grid-template-columns: 75% 25%;
+    gap: 24px;
+}
+
 .gameTitle,
-.title,
-.section {
+.title {
     margin-top: 24px;
+}
+
+.section {
+    margin-top: 48px;
 }
 
 .gameTitle {
@@ -34,7 +45,8 @@
 }
 
 .title,
-.sectionHeader {
+.sectionHeader,
+.subsectionHeader {
     font-weight: bold;
 }
 
@@ -45,17 +57,37 @@
 }
 
 .sectionHeader {
-    margin-top: 48px;
+    font-size: 2.25em;
+}
 
+.subsectionHeader {
     font-size: 2em;
 }
 
 .section {    
     display: flex;
     flex-direction: column;
-    gap: 24px;
+}
+
+.subsection {
+    margin-top: 24px;
+}
+
+.paragraphContainer {
+    display: flex;
+    flex-direction: column;
+
+    margin-top: 24px;
 }
 
 .paragraph {
+    margin-top: 8px;
     font-size: 1.5em;
+}
+
+.image {
+    margin-top: 24px;
+    margin-bottom: 16px;
+
+    align-self: center;
 }
