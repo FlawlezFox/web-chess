@@ -49,3 +49,7 @@
 .canAttack {
     background-color: var(--green);
 }
+
+.kingIsCheck {
+    background-color: var(--red);
+}

@@ -1,15 +1,19 @@
 import ICell from "../../../interfaces/ICell";
 import cn from "classnames";
+import { FigureNames } from "../../../../models/figures/Figure";
+import { Colors } from "../../../../models/Colors";
 
 // styles
 import styles from "./index.module.css";
 
-const CellComponent = ({ cell, selected, select }: ICell) => {
+const CellComponent = ({ cell, selected, select, whiteKingIsCheck, blackKingIsCheck }: ICell) => {
     const className: string = cn(
         styles["cell"], 
         styles[cell.color], 
         selected ? styles["selected"] : "",
-        cell.available && cell.figure ? styles["canAttack"] : ""
+        cell.available && cell.figure && cell.figure.name !== FigureNames.KING ? styles["canAttack"] : "",
+        cell.figure && cell.figure.name === FigureNames.KING && whiteKingIsCheck && cell.figure.color === Colors.WHITE ? styles["kingIsCheck"] : "",
+        cell.figure && cell.figure.name === FigureNames.KING && blackKingIsCheck && cell.figure.color === Colors.BLACK ? styles["kingIsCheck"] : ""
     );
 
     return (

@@ -119,6 +119,59 @@ export class Board {
         return newBoard;
     }
 
+    isCheckmate(color: Colors): boolean {
+        const cellWithKing = this.findCellWithKing(color);
+
+        if (!cellWithKing) {
+            return false;
+        }
+
+        if (!this.isCheck(color)) {
+            return false;
+        }
+
+        for (const row of this.cells) {
+            for (const cell of row) {
+                if ((cellWithKing.isEnemy(cell) && cell.figure?.name !== FigureNames.KING || cell.isEmpty()) && cellWithKing.canMove(cell, this)) {
+                    console.log("found possible move! " + cell.x + (cell.y + 1));
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
+
+    isCheck(color: Colors) : boolean {
+        const cellWithKing = this.findCellWithKing(color);
+
+        if (!cellWithKing) {
+            return false;
+        }
+
+        for (const row of this.cells) {
+            for (const cell of row) {
+                if (cell.figure && cell.figure.color !== color && cell.canMove(cellWithKing, this)) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    findCellWithKing(color: Colors): Cell | null {
+        for (const row of this.cells) {
+            for (const cell of row) {
+                if (cell.figure && cell.figure.name === FigureNames.KING && cell.figure.color === color) {
+                    return cell;
+                }
+            }
+        }
+
+        return null;
+    }
+
     static createFigure(figure: Figure | null): Figure | null {
         if (!figure)
             return null;
