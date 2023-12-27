@@ -1,7 +1,7 @@
 import { nanoid } from "nanoid";
 import { Board } from "./Board";
 import { Colors } from "./Colors";
-import { Figure } from "./figures/Figure";
+import { Figure, FigureNames } from "./figures/Figure";
 import { Bishop } from "./figures/Bishop";
 import { Knight } from "./figures/Knight";
 import { Pawn } from "./figures/Pawn";
@@ -162,6 +162,18 @@ export class Cell {
             return false;
         }
 
+        for (const row of board.cells) {
+            for (const cell of row) {
+                if (cell.figure && cell.figure.color !== this.figure.color) {
+                    if (cell.figure.name !== FigureNames.PAWN && cell.figure.name !== FigureNames.KING && cell.canMove(target, board)) {
+                        return false;
+                    } else if (cell.figure.name === FigureNames.PAWN && cell.canPawnEat(target, board)) {
+                        return false;
+                    }
+                }
+            }
+        }
+
         if ((target.y === this.y + 1 || target.y === this.y - 1) && this.isEmptyVertical(target, board)) {
             return true;
         }
@@ -228,6 +240,14 @@ export class Cell {
         }
 
         return false;
+    }
+
+    canPawnEat(target: Cell, board: Board): boolean {
+        const direction = this.figure?.color === Colors.BLACK ? 1 : -1;
+
+        return target.y === this.y + direction
+            && (this.getNumericXCoordinate(target.x, board) === this.getNumericXCoordinate(this.x, board) + 1
+            || this.getNumericXCoordinate(target.x, board) === this.getNumericXCoordinate(this.x, board) - 1)
     }
 
     canQueenMove(target: Cell, board: Board): boolean {
