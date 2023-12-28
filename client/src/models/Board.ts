@@ -64,11 +64,18 @@ export class Board {
     private addKings() {
         this.getCell(4, 0).figure = new King(Colors.BLACK);
         this.getCell(4, 7).figure = new King(Colors.WHITE);
+
+        // for stalemate demonstration
+        // this.getCell(7, 0).figure = new King(Colors.BLACK);
+        // this.getCell(4, 7).figure = new King(Colors.WHITE);
     }
 
     private addQueens() {
         this.getCell(3, 0).figure = new Queen(Colors.BLACK);
         this.getCell(3, 7).figure = new Queen(Colors.WHITE);
+
+        // for stalemate demonstration
+        // this.getCell(5, 1).figure = new Queen(Colors.WHITE);
     }
 
     private addBishops() {
@@ -83,7 +90,6 @@ export class Board {
         this.getCell(6, 0).figure = new Knight(Colors.BLACK);
         this.getCell(1, 7).figure = new Knight(Colors.WHITE);
         this.getCell(6, 7).figure = new Knight(Colors.WHITE);
-        
     }
 
     private addRooks() {
@@ -139,6 +145,53 @@ export class Board {
             }
         }
 
+        for (const row of this.cells) {
+            for (const cell of row) {
+                if (cell.figure && cell.figure.color === color && cell.figure.name !== FigureNames.KING) {
+                    const ourFigure = cell;
+
+                    if (this.canFigureGuardKing(ourFigure)) {
+                        return false;
+                    }
+                }
+            }
+        }
+
+        return true;
+    }
+
+    isStalemate(color: Colors) : boolean {
+        const cellWithKing = this.findCellWithKing(color);
+
+        if (!cellWithKing) {
+            return false;
+        }
+
+        // if king is in check its not stalemate
+        if (this.isCheck(color)) {
+            return false;
+        }
+
+        for (const row of this.cells) {
+            for (const cell of row) {
+                if ((cellWithKing.isEnemy(cell) && cell.figure?.name !== FigureNames.KING || cell.isEmpty()) && cellWithKing.canMove(cell, this)) {
+                    return false;
+                }
+            }
+        }
+
+        for (const row of this.cells) {
+            for (const cell of row) {
+                if (cell.figure && cell.figure.color === color && cell.figure.name !== FigureNames.KING) {
+                    const ourFigure = cell;
+
+                    if (this.canOurFigureMove(ourFigure)) {
+                        return false;
+                    }
+                }
+            }
+        }
+
         return true;
     }
 
@@ -158,6 +211,48 @@ export class Board {
         }
 
         return false;
+    }
+
+    canFigureGuardKing(ourFigure: Cell): boolean {
+        if (!ourFigure.figure) {
+            return false;
+        }
+
+        const newBoard: Board = new Board();
+        newBoard.initCells(this.cells);
+        const ourFigureCopy: Cell = new Cell(ourFigure.x, ourFigure.y, ourFigure.color, Board.createFigure(ourFigure.figure));
+
+        for (const row of newBoard.cells) {
+            for (const cell of row) {
+                if ((ourFigureCopy.isEnemy(cell)  || cell.isEmpty()) && ourFigureCopy.canMove(cell, newBoard)) {
+                    if (!ourFigureCopy.figure) {
+                        return false;
+                    }
+
+                    ourFigureCopy.moveFigure(cell, newBoard);
+
+                    if (!newBoard.isCheck(ourFigure.figure.color)) {
+                        console.log('not checkmated anymore ' + ourFigure.figure.name);
+
+                        return true;
+                    }
+                }
+            }
+        }
+
+        return false;
+    }
+
+    canOurFigureMove(ourFigure: Cell): boolean {
+        for (const row of this.cells) {
+            for (const cell of row) {
+                if ((ourFigure.isEnemy(cell)  || cell.isEmpty()) && ourFigure.canMove(cell, this)) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
     }
 
     findCellWithKing(color: Colors): Cell | null {

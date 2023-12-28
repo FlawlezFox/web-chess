@@ -15,10 +15,15 @@ import styles from "./index.module.css";
 
 const BoardComponent = ({ board, setBoard, currentPlayer, swapPlayer, yourPlayer }: IBoard) => {
     const [selectedCell, setSelectedCell] = useState<Cell | null>(null);
+
     const [whiteKingIsCheck, setWhiteKingIsCheck] = useState<boolean>(false);
     const [blackKingIsCheck, setBlackKingIsCheck] = useState<boolean>(false);
+
     const [isWhiteKingCheckmated, setIsWhiteKingCheckmated] = useState<boolean>(false);
     const [isBlackKingCheckmated, setIsBlackKingCheckmated] = useState<boolean>(false);
+
+    const [isWhiteKingStalemated, setIsWhiteKingStalemated] = useState<boolean>(false);
+    const [isBlackKingStalemated, setIsBlackKingStalemated] = useState<boolean>(false);
 
     function select(cell: Cell) {
         if (currentPlayer?.color === yourPlayer?.color) {
@@ -41,12 +46,18 @@ const BoardComponent = ({ board, setBoard, currentPlayer, swapPlayer, yourPlayer
     useEffect(() => {
         setWhiteKingIsCheck(board.isCheck(Colors.WHITE));
         setBlackKingIsCheck(board.isCheck(Colors.BLACK));
+
         setIsWhiteKingCheckmated(board.isCheckmate(Colors.WHITE));
         setIsBlackKingCheckmated(board.isCheckmate(Colors.BLACK));
+
+        setIsWhiteKingStalemated(board.isStalemate(Colors.WHITE));
+        setIsBlackKingStalemated(board.isStalemate(Colors.BLACK));
 
         console.log(`White king isCheck: ${whiteKingIsCheck}\nBlack king isCheck: ${blackKingIsCheck}`);
 
         console.log(`White king isCheckmated: ${isWhiteKingCheckmated}\nBlack king isCheckmated: ${isBlackKingCheckmated}`);
+
+        console.log(`White king isStalemated: ${isWhiteKingStalemated}\nBlack king isStalemated: ${isBlackKingStalemated}`);
     }, [board, currentPlayer]);
 
     useEffect(() => {
