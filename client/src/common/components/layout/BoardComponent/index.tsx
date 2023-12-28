@@ -13,7 +13,7 @@ import CellComponent from "../CellComponent";
 // styles
 import styles from "./index.module.css";
 
-const BoardComponent = ({ board, setBoard, currentPlayer, swapPlayer, yourPlayer }: IBoard) => {
+const BoardComponent = ({ board, setBoard, currentPlayer, swapPlayer, yourPlayer, showMessage }: IBoard) => {
     const [selectedCell, setSelectedCell] = useState<Cell | null>(null);
 
     const [whiteKingIsCheck, setWhiteKingIsCheck] = useState<boolean>(false);
@@ -52,6 +52,26 @@ const BoardComponent = ({ board, setBoard, currentPlayer, swapPlayer, yourPlayer
 
         setIsWhiteKingStalemated(board.isStalemate(Colors.WHITE));
         setIsBlackKingStalemated(board.isStalemate(Colors.BLACK));
+
+        if (isWhiteKingCheckmated) {
+            socket.emit("whiteKingCheckmated", "Черные победили матом");
+            showMessage("win", `Игрок ${yourPlayer?.name} победил`, "Черные победили матом", false);
+        }
+
+        if (isBlackKingCheckmated) {
+            socket.emit("blackKingCheckmated", "Белые победили матом");
+            showMessage("win", `Игрок ${yourPlayer?.name} победил`, "Белые победили матом", false);
+        }
+
+        if (isWhiteKingStalemated) {
+            socket.emit("whiteKingStalemated", "Патовая ситуация");
+            showMessage("draw", `Игра завершилась ничьей`, "Патовая ситуация", false);
+        }
+
+        if (isBlackKingStalemated) {
+            socket.emit("blackKingStalemated", "Патовая ситуация");
+            showMessage("draw", `Игра завершилась ничьей`, "Патовая ситуация", false);
+        }
 
         console.log(`White king isCheck: ${whiteKingIsCheck}\nBlack king isCheck: ${blackKingIsCheck}`);
 

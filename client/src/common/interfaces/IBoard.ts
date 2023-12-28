@@ -7,6 +7,7 @@ interface IBoard {
     currentPlayer: Player | null;
     swapPlayer: () => void;
     yourPlayer: Player | null;
+    showMessage: (icon: "win" | "draw", messageText: string, descriptionText: string, wait: boolean) => void
 }
 
 export default IBoard;

@@ -41,6 +41,15 @@ class Game {
 
         this.socket.on("playerTimerExpired", (player) => this.onPlayerTimerExpired(player));
 
+        this.socket.on("whiteKingCheckmated", (message) => this.onWhiteKingCheckmated(message));
+
+        this.socket.on("blackKingCheckmated", (message) => this.onBlackKingCheckmated(message));
+
+        this.socket.on("whiteKingStalemated", (message) => this.onWhiteKingStalemated(message));
+
+        this.socket.on("blackKingStalemated", (message) => this.onBlackKingStalemated(message));
+
+
         // socket.on("playerDraw", onPlayerDraw(io, socket, player));
     }
 
@@ -134,6 +143,22 @@ class Game {
     onPlayerTimerExpired(player) {
         console.log(`Player's ${player.name} timer expired, he lost!`);
         this.socket.to(this.currentRoom).emit("playerTimerExpired", player);
+    }
+
+    onWhiteKingCheckmated(message) {
+        this.socket.to(this.currentRoom).emit("whiteKingCheckmated", message);
+    }
+
+    onBlackKingCheckmated(message) {
+        this.socket.to(this.currentRoom).emit("blackKingCheckmated", message);
+    }
+
+    onWhiteKingStalemated(message) {
+        this.socket.to(this.currentRoom).emit("whiteKingStalemated", message);
+    }
+
+    onBlackKingStalemated(message) {
+        this.socket.to(this.currentRoom).emit("blackKingStalemated", message);
     }
 
     // helping functions

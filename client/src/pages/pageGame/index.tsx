@@ -97,6 +97,35 @@ const PageGame = () => {
             showMessage("win", `Игрок ${yourPlayer?.name} победил`, "У противника кончился таймер", false);
         });
 
+        socket.on("whiteKingCheckmated", (message) => {
+            if (yourPlayer?.color === Colors.WHITE) {
+                console.log(`Игрок ${yourPlayer.name} проиграл, так как ему поставили мат!`);
+
+                showMessage("win", `Игрок ${blackPlayer?.name} победил`, message, false);
+            }
+        });
+
+        socket.on("blackKingCheckmated", (message) => {
+            if (yourPlayer?.color === Colors.BLACK) {
+                console.log(`Игрок ${yourPlayer.name} проиграл, так как ему поставили мат!`);
+
+                showMessage("win", `Игрок ${whitePlayer?.name} победил`, message, false);
+            }
+        });
+
+        socket.on("whiteKingStalemated", (message) => {
+            console.log(`патовая ситуация`);
+
+            showMessage("draw", `Игра завершилась ничьей!`, message, false);
+        });
+
+        socket.on("blackKingStalemated", (message) => {
+            console.log(`патовая ситуация`);
+
+            showMessage("draw", `Игра завершилась ничьей!`, message, false);
+        });
+
+
         return () => {
             socket.off('playerDisconnected');
             socket.off('playerGaveUp');
@@ -104,6 +133,10 @@ const PageGame = () => {
             socket.off("playerConfirmDraw");
             socket.off("playerRejectedDraw");
             socket.off("playerTimerExpired");
+            socket.off("whiteKingCheckmated");
+            socket.off("blackKingCheckmated");
+            socket.off("whiteKingStalemated");
+            socket.off("blackKingStalemated");
             hideMessage();
         };
     }, [yourPlayer]);
@@ -268,6 +301,7 @@ const PageGame = () => {
                         currentPlayer={currentPlayer}
                         yourPlayer={yourPlayer}
                         swapPlayer={swapPlayer}
+                        showMessage={showMessage}
                     />
 
                     <HistoryPanel
