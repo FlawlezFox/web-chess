@@ -16,7 +16,6 @@ const Timer = ({ currentPlayer, opponentPlayer, showMessage }: ITimer) => {
     useEffect(() => {
         time.setSeconds(time.getSeconds() + 60);
         timer.restart(time, true);
-        timer.pause();
     }, [currentPlayer]);
 
     function onExpire() {
